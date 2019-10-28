@@ -187,5 +187,5 @@ class WENKUParser:
                         if content.text != u'\xa0':
                             data[title].append(content.text)
                             logger.info(content.text)
-        except Exception as e:
-            logger.warn('Can\'t find detail of {} \n {}'.format(aid, e))
+        except:
+            logger.warn('Can\'t find detail of {}')
