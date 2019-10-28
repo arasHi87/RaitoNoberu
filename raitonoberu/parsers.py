@@ -169,23 +169,42 @@ class WENKUParser:
             content_table_url = soup.find('a', text='小说目录')['href']
 
             # get main page
-            data = {}
             resp = requests.get(url=content_table_url)
             resp.encoding = 'gbk'
             soup = bs(resp.text, 'html.parser')
-            author = soup.find('div', id='info').text.replace('作者：', '')
             title = ''
+            data = {
+                'content': {},
+                'author': soup.find('div', id='info').text.replace('作者：', '')
+            }
             table = soup.find('table').find_all('tr')
             for body in table:
                 contents = body.find_all('td')
                 for content in contents:
                     if content['class'][0] == 'vcss':
                         title = content.text
-                        data[title] = []
-                        logger.info('    ' + title)
+                        data['content'][title] = []
+                        # logger.info('    ' + title)
                     else:
                         if content.text != u'\xa0':
-                            data[title].append(content.text)
-                            logger.info(content.text)
+                            data['content'][title].append(
+                                dict({
+                                    'title':
+                                    content.text,
+                                    'url':
+                                    content_table_url.replace(
+                                        'index.htm',
+                                        content.find('a')['href'])
+                                }))
+                            # logger.info(content.text)
+            return data
         except:
-            logger.warn('Can\'t find detail of {}')
+            logger.warn('Can\'t find detail of {}'.format(aid))
+
+    def show_detail(self, data):
+        for idx in data['content']:
+            logger.info(idx)
+            for dict_data in data['content'][idx]:
+                logger.info('    ' + dict_data['title'])
+
+    # def downloader(self, data, type='epub'):
