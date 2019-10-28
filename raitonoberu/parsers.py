@@ -16,10 +16,14 @@ from config import WENKU_USERNAME, WENKU_PASSWORD
 class ARGParser:
     def parser(self):
         parser = argparse.ArgumentParser()
+        main_group = parser.add_mutually_exclusive_group(required=True)
         # search parser
-        parser.add_argument('--search',
-                            dest='search_key',
-                            help='Search keyword')
+        main_group.add_argument('--search',
+                                dest='search_key',
+                                help='Search keyword')
+        main_group.add_argument('--detail',
+                                dest='search_detail',
+                                help='get the book\'s detail')
         args = parser.parse_args()
         return args
 
@@ -34,7 +38,7 @@ class WENKUParser:
         self.wenku_session = requests.Session()
         # self.data = {}
 
-        #lode data
+        # lode data
         # with open('../data/wenku/data.json', 'r', encoding='utf8') as fp:
         #     self.data = json.load(fp)
 
@@ -153,3 +157,35 @@ class WENKUParser:
                 logger.info('%4s : %s' % (aid, title))
         except:
             logger.error('Fail to search wenku')
+
+    def detail(self, aid):
+        try:
+            url = self.main_page.replace('$', str(aid))
+
+            # get the content table of book's link
+            resp = requests.get(url=url)
+            resp.encoding = 'gbk'
+            soup = bs(resp.text, 'html.parser')
+            content_table_url = soup.find('a', text='小说目录')['href']
+
+            # get main page
+            data = {}
+            resp = requests.get(url=content_table_url)
+            resp.encoding = 'gbk'
+            soup = bs(resp.text, 'html.parser')
+            author = soup.find('div', id='info').text.replace('作者：', '')
+            title = ''
+            table = soup.find('table').find_all('tr')
+            for body in table:
+                contents = body.find_all('td')
+                for content in contents:
+                    if content['class'][0] == 'vcss':
+                        title = content.text
+                        data[title] = []
+                        logger.info('    ' + title)
+                    else:
+                        if content.text != u'\xa0':
+                            data[title].append(content.text)
+                            logger.info(content.text)
+        except Exception as e:
+            logger.warn('Can\'t find detail of {} \n {}'.format(aid, e))
