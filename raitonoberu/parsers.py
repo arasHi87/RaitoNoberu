@@ -122,6 +122,7 @@ class WENKUParser:
 
     def searcher(self, key):
         try:
+            logger.info('======= wenku =======')
             self.login()
             key = OpenCC('tw2s').convert(key)
             resp = self.wenku_session.get(url=self.search_url.replace(
@@ -129,23 +130,22 @@ class WENKUParser:
             resp.encoding = 'gbk'
             soup = bs(resp.text, 'html.parser')
 
-
             # get search result
             if soup.find('caption', text=re.compile('搜索结果')):
                 # multi search result
                 max_page = int(soup.find('a', class_='last').text)
-                for i in range(2, max_page+2):
+                for i in range(2, max_page + 2):
                     novels = soup.find_all('a', text=re.compile(key))
                     for novel in novels:
-                        logger.info(
-                            '%4s : %s' %
-                            (re.findall(r'[/][0-9]+', novel['href'])[0].replace(
+                        logger.info('%4s : %s' % (re.findall(
+                            r'[/][0-9]+', novel['href'])[0].replace(
                                 '/', ''), novel.text))
-                    if (i == max_page+1):
+                    if (i == max_page + 1):
                         break
                     time.sleep(5)
                     url = self.search_url.replace(
-                        '$', requests.utils.quote(key, encoding='gbk')) + '&page=' + str(i)
+                        '$', requests.utils.quote(
+                            key, encoding='gbk')) + '&page=' + str(i)
                     resp = self.wenku_session.get(url=url)
                     resp.encoding = 'gbk'
                     soup = bs(resp.text, 'html.parser')
@@ -179,7 +179,8 @@ class WENKUParser:
             data = {
                 'content': {},
                 'aid': aid,
-                'title': OpenCC('s2tw').convert(soup.find('div', id='title').text),
+                'title':
+                OpenCC('s2tw').convert(soup.find('div', id='title').text),
                 'author': soup.find('div', id='info').text.replace('作者：', '')
             }
             table = soup.find('table').find_all('tr')
@@ -254,3 +255,23 @@ class WENKUParser:
         for file in os.listdir(path):
             if file.endswith('txt'):
                 os.remove(os.path.join(path, file))
+
+
+class EPUBSITEParser:
+    def __init__(self):
+        self.base_url = 'http://epubln.blogspot.com/'
+        self.search_url = 'http://epubln.blogspot.com/search/'
+        self.download_url = 'https://docs.google.com/uc?export=download'
+
+    def searcher(self, key):
+        logger.info('===== epub site =====')
+        resp = requests.get(url=self.search_url, params={'q': key})
+        resp.encoding = 'utf-8'
+        soup = bs(resp.text, 'html.parser')
+        if '找不到與查詢字詞' in soup.find('h2', class_='pagetitle').text:
+            logger.warn('epub site can\'t find the match result')
+        else:
+            results = soup.find_all('a', rel='bookmark', text=re.compile(key))
+            for result in results:
+                logger.info('%13s : %s' % (result['href'].replace(
+                    self.base_url, '').replace('.html', ''), result.text))
