@@ -1,13 +1,18 @@
+import os
 import re
 import json
+import codecs
+import shutil
 import operator
 import requests
 import argparse
 import collections
+import urllib.request
+import urllib.request
 from logger import logger
 from opencc import OpenCC
 from fuzzywuzzy import fuzz
-from urllib.parse import quote
+from epubmaker import txt2epub
 import http.cookiejar as cookielib
 from bs4 import BeautifulSoup as bs
 from config import WENKU_USERNAME, WENKU_PASSWORD
@@ -24,6 +29,9 @@ class ARGParser:
         main_group.add_argument('--detail',
                                 dest='search_detail',
                                 help='get the book\'s detail')
+        main_group.add_argument('--download',
+                                dest='download_datail',
+                                help='download book')
         args = parser.parse_args()
         return args
 
@@ -34,7 +42,7 @@ class WENKUParser:
         self.login_url = 'https://www.wenku8.net/login.php'
         self.main_page = 'https://www.wenku8.net/book/$.htm'
         self.search_url = 'https://www.wenku8.net/modules/article/search.php?searchtype=articlename&searchkey=$'
-        self.download_url = 'dl.wenku8.com/packtxt.php?aid=$&vid=*&charset=big5'
+        self.download_url = 'http://dl.wenku8.com/packtxt.php?aid=$&vid=*&charset=big5'
         self.wenku_session = requests.Session()
         # self.data = {}
 
@@ -175,6 +183,8 @@ class WENKUParser:
             title = ''
             data = {
                 'content': {},
+                'aid': aid,
+                'title': soup.find('div', id='title').text,
                 'author': soup.find('div', id='info').text.replace('作者：', '')
             }
             table = soup.find('table').find_all('tr')
@@ -191,10 +201,9 @@ class WENKUParser:
                                 dict({
                                     'title':
                                     content.text,
-                                    'url':
-                                    content_table_url.replace(
-                                        'index.htm',
-                                        content.find('a')['href'])
+                                    'vid':
+                                    re.findall(r'[0-9]+',
+                                               content.find('a')['href'])
                                 }))
                             # logger.info(content.text)
             return data
@@ -207,4 +216,31 @@ class WENKUParser:
             for dict_data in data['content'][idx]:
                 logger.info('    ' + dict_data['title'])
 
-    # def downloader(self, data, type='epub'):
+    def downloader(self, data):
+        path = '../data/novels/' + data['title']
+        if not os.path.isdir(path):
+            os.mkdir(path)
+        else:
+            for file in os.listdir(path):
+                file_path = os.path.join(path, file)
+                try:
+                    if os.path.isfile(file_path):
+                        os.unlink(file_path)
+                except Exception as e:
+                    logger.warn(
+                        'There are some error when delete old novel data, please delete it by yourself'
+                    )
+        # get content of every chapter
+        for name in data['content']:
+            for content in data['content'][name]:
+                url = self.download_url.replace('$', data['aid']).replace(
+                    '*', content['vid'][0])
+                resp = requests.get(url, allow_redirects=True)
+                with open(os.path.join(path, content['vid'][0] + '.txt'),
+                          'w',
+                          encoding='utf-8') as fp:
+                    fp.write(resp.text)
+        txt2epub(data, path)
+        for file in os.listdir(path):
+            if file.endswith('txt'):
+                os.remove(os.path.join(path, file))
