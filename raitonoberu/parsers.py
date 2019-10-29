@@ -9,11 +9,15 @@ import argparse
 import collections
 import urllib.request
 import urllib.request
+
 from logger import logger
 from opencc import OpenCC
 from fuzzywuzzy import fuzz
 from epubmaker import txt2epub
+
+import multiprocessing as mp
 import http.cookiejar as cookielib
+
 from bs4 import BeautifulSoup as bs
 from config import WENKU_USERNAME, WENKU_PASSWORD
 
@@ -32,7 +36,26 @@ class ARGParser:
         main_group.add_argument('--download',
                                 dest='download_datail',
                                 help='download book')
+        parser.add_argument('--cpu',
+                            dest='process_count',
+                            default=4,
+                            type=int,
+                            help='set download process count')
+
         args = parser.parse_args()
+
+        # check process count is illegal
+        if args.process_count <= 0:
+            args.process_count = 1
+            logger.warn(
+                'The process you set is too less, system has already change it to 1'
+            )
+        elif args.process_count > 8:
+            args.process_count = 8
+            logger.warn(
+                'The process you set is too much, system has already change it to 8'
+            )
+
         return args
 
 
@@ -216,8 +239,18 @@ class WENKUParser:
             for dict_data in data['content'][idx]:
                 logger.info('    ' + dict_data['title'])
 
-    def downloader(self, data):
+    def downloader(self, data, process_count):
         path = '../data/novels/' + data['title']
+
+        # template download function
+        def download():
+            resp = requests.get(url, allow_redirects=True)
+            with open(os.path.join(path, content['vid'][0] + '.txt'),
+                      'w',
+                      encoding='utf-8') as fp:
+                fp.write(resp.text)
+
+        # deal data file
         if not os.path.isdir(path):
             os.mkdir(path)
         else:
@@ -230,17 +263,22 @@ class WENKUParser:
                     logger.warn(
                         'There are some error when delete old novel data, please delete it by yourself'
                     )
+
         # get content of every chapter
+        logger.info('strating download')
+        p = mp.Pool(processes=process_count)
         for name in data['content']:
             for content in data['content'][name]:
                 url = self.download_url.replace('$', data['aid']).replace(
                     '*', content['vid'][0])
-                resp = requests.get(url, allow_redirects=True)
-                with open(os.path.join(path, content['vid'][0] + '.txt'),
-                          'w',
-                          encoding='utf-8') as fp:
-                    fp.write(resp.text)
+                p.apply_async(download())
+        p.close()
+        p.join()
+
+        # convert data to epub
         txt2epub(data, path)
+
+        # delete other file unless
         for file in os.listdir(path):
             if file.endswith('txt'):
                 os.remove(os.path.join(path, file))
