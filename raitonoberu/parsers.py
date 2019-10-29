@@ -67,11 +67,6 @@ class WENKUParser:
         self.search_url = 'https://www.wenku8.net/modules/article/search.php?searchtype=articlename&searchkey=$'
         self.download_url = 'http://dl.wenku8.com/packtxt.php?aid=$&vid=*&charset=big5'
         self.wenku_session = requests.Session()
-        # self.data = {}
-
-        # lode data
-        # with open('../data/wenku/data.json', 'r', encoding='utf8') as fp:
-        #     self.data = json.load(fp)
 
     def login(self):
         # login into wenku
@@ -123,44 +118,6 @@ class WENKUParser:
             }
         except:
             logger.warn('Can\'t find novel {}'.format(str(aid)))
-
-    # def re_get_data(self, end=2700):
-    #     for i in range(1, end):
-    #         result = self.get_main_page(i)
-    #         if result:
-    #             self.data.update(result)
-    #             with open('../data/wenku/data.json', 'w',
-    #                       encoding='utf8') as fp:
-    #                 json.dump(self.data, fp, ensure_ascii=False)
-
-    # def renew(self):
-    #     # get lastes number from data
-    #     page = int(max(self.data, key=int)) + 1
-    #     while True:
-    #         result = self.get_main_page(page)
-    #         page += 1
-    #         if result:
-    #             self.data.update(result)
-    #             with open('../data/wenku/data.json', 'w',
-    #                       encoding='utf8') as fp:
-    #                 json.dump(self.data, fp, ensure_ascii=False)
-    #         else:
-    #             logger.info('It\'s already renewed wenku\'s data to lastest')
-    #             break
-
-    # def local_searcher(self, key):
-    #     result = {}
-    #     rating = 0
-    #     key = OpenCC('tw2s').convert(key)
-    #     print(key)
-    #     for idx in self.data.keys():
-    #         result[idx] = fuzz.partial_token_set_ratio(self.data[idx], key)
-    #     result = collections.OrderedDict(
-    #         sorted(result.items(), key=operator.itemgetter(1), reverse=True))
-    #     for idx in result:
-    #         if result[idx] < 50:
-    #             break
-    #         logger.info("%4s : %s" % (idx, self.data[idx]['title']))
 
     def searcher(self, key):
         try:
