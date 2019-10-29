@@ -179,7 +179,7 @@ class WENKUParser:
             data = {
                 'content': {},
                 'aid': aid,
-                'title': soup.find('div', id='title').text,
+                'title': OpenCC('s2tw').convert(soup.find('div', id='title').text),
                 'author': soup.find('div', id='info').text.replace('作者：', '')
             }
             table = soup.find('table').find_all('tr')
