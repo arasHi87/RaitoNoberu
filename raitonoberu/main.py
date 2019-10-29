@@ -14,7 +14,12 @@ def main():
         source = search_detail[0]
         _id = search_detail[1]
         if source == 'wenku':
-            wenku_parser.detail(_id)
+            wenku_parser.show_detail(wenku_parser.detail(_id))
+    elif opt.download_datail is not None:
+        download_datail = opt.download_datail.split(':')
+        source = download_datail[0]
+        _id = download_datail[1]
+        wenku_parser.downloader(wenku_parser.detail(_id), opt.process_count)
 
 
 if __name__ == '__main__':
