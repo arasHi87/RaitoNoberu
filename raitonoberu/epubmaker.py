@@ -14,7 +14,8 @@ def txt2epub(data, path):
         for content in data['content'][name]:
             chapter = epub.EpubHtml(title=content['title'],
                                     file_name=content['vid'][0] + '.xhtml')
-            with open(path + '/' + content['vid'][0] + '.txt', 'r',
+            with open(path + '/' + content['vid'][0] + '.txt',
+                      'r',
                       encoding='utf-8') as fp:
                 chapter.content = fp.read()
             book.add_item(chapter)
