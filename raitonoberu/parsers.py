@@ -1,5 +1,6 @@
 import os
 import re
+import time
 import json
 import codecs
 import shutil
@@ -127,14 +128,27 @@ class WENKUParser:
                 '$', requests.utils.quote(key, encoding='gbk')))
             resp.encoding = 'gbk'
             soup = bs(resp.text, 'html.parser')
+
+
+            # get search result
             if soup.find('caption', text=re.compile('搜索结果')):
                 # multi search result
-                novels = soup.find_all('a', text=re.compile(key))
-                for novel in novels:
-                    logger.info(
-                        '%4s : %s' %
-                        (re.findall(r'[/][0-9]+', novel['href'])[0].replace(
-                            '/', ''), novel.text))
+                max_page = int(soup.find('a', class_='last').text)
+                for i in range(2, max_page+2):
+                    novels = soup.find_all('a', text=re.compile(key))
+                    for novel in novels:
+                        logger.info(
+                            '%4s : %s' %
+                            (re.findall(r'[/][0-9]+', novel['href'])[0].replace(
+                                '/', ''), novel.text))
+                    if (i == max_page+1):
+                        break
+                    time.sleep(5)
+                    url = self.search_url.replace(
+                        '$', requests.utils.quote(key, encoding='gbk')) + '&page=' + str(i)
+                    resp = self.wenku_session.get(url=url)
+                    resp.encoding = 'gbk'
+                    soup = bs(resp.text, 'html.parser')
             else:
                 # singal search
                 aid = re.findall(r'=[0-9]+',
@@ -143,7 +157,8 @@ class WENKUParser:
                                                '=', '')
                 title = self.get_main_page(aid)[str(aid)]['title']
                 logger.info('%4s : %s' % (aid, title))
-        except:
+        except Exception as e:
+            logger.debug(e)
             logger.error('Fail to search wenku')
 
     def detail(self, aid):
