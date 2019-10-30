@@ -14,13 +14,12 @@ import urllib.request
 from logger import logger
 from opencc import OpenCC
 from fuzzywuzzy import fuzz
-from utils import txt2epub, download_file_from_google_drive
+from bs4 import BeautifulSoup as bs
+from config import WENKU_USERNAME, WENKU_PASSWORD
+from utils import txt2epub, download_file_from_google_drive, download_file_from_mega_drive
 
 import multiprocessing as mp
 import http.cookiejar as cookielib
-
-from bs4 import BeautifulSoup as bs
-from config import WENKU_USERNAME, WENKU_PASSWORD
 
 
 class ARGParser:
@@ -281,15 +280,27 @@ class EPUBSITEParser:
         resp = requests.get(url=self.base_url + _id + '.html')
         resp.encoding = 'utf-8'
         soup = bs(resp.text, 'html.parser')
-        url = soup.find('a', text='google')['href']
         title = soup.find('a', rel='bookmark').text
-        if url:
+        google_url = soup.find('a', text='google')
+        mega_url   = soup.find('a', text='mega')
+        if google_url:
+            google_url = google_url['href']
             try:
-                logger.info('Strating download')
-                _id = url.replace('https://drive.google.com/file/d/',
+                logger.info('Strating download use google drive')
+                _id = google_url.replace('https://drive.google.com/file/d/',
                                 '').replace('/view?usp=sharing', '').replace(
                                     'https://drive.google.com/open?id=', '')
                 download_file_from_google_drive(_id, '../data/novels/{}.epub'.format(title))
                 logger.info('Download successful')
             except Exception as e:
                 logger.warn('There are some error when download, please try later \n {}'.format(e))
+        elif mega_url:
+            mega_url = mega_url['href']
+            try:
+                logger.info('Strating download use mega drive')
+                download_file_from_mega_drive(mega_url, '../data/novels/', title + '.epub')
+                logger.info('Download successful')
+            except Exception as e:
+                logger.warn('There are some error when download, please try later \n {}'.format(e))
+        else:
+            logger.warn('There has no source can download')
