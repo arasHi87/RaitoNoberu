@@ -7,8 +7,6 @@ RAITCO NOBERU可以幫你在各個小說網站尋找輕小說並下載成epub檔
 
 預計支援
 * xbook
-  
-補、epub輕小說站目前僅支援google drive下載，mega部份遇到瓶頸了，如果有人會使用mage download的話請聯繫我
 
 ## usage
 
