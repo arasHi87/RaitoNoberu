@@ -13,8 +13,8 @@ import urllib.request
 
 from logger import logger
 from opencc import OpenCC
-from utils import txt2epub
 from fuzzywuzzy import fuzz
+from utils import txt2epub, download_file_from_google_drive
 
 import multiprocessing as mp
 import http.cookiejar as cookielib
@@ -278,10 +278,18 @@ class EPUBSITEParser:
 
     def downloader(self, _id):
         # get main page
-        resp = requests.get(url=self.base_url+_id + '.html')
+        resp = requests.get(url=self.base_url + _id + '.html')
         resp.encoding = 'utf-8'
         soup = bs(resp.text, 'html.parser')
         url = soup.find('a', text='google')['href']
+        title = soup.find('a', rel='bookmark').text
         if url:
-            _id = url.replace('https://drive.google.com/file/d/', '').replace('/view?usp=sharing', '')
-            print(_id)
+            try:
+                logger.info('Strating download')
+                _id = url.replace('https://drive.google.com/file/d/',
+                                '').replace('/view?usp=sharing', '').replace(
+                                    'https://drive.google.com/open?id=', '')
+                download_file_from_google_drive(_id, '../data/novels/{}.epub'.format(title))
+                logger.info('Download successful')
+            except Exception as e:
+                logger.warn('There are some error when download, please try later \n {}'.format(e))

@@ -21,7 +21,11 @@ def main():
         download_datail = opt.download_datail.split(':')
         source = download_datail[0]
         _id = download_datail[1]
-        wenku_parser.downloader(wenku_parser.detail(_id), opt.process_count)
+        if source == 'wenku':
+            wenku_parser.downloader(wenku_parser.detail(_id),
+                                    opt.process_count)
+        elif source == 'epub':
+            epubsite_parser.downloader(_id)
 
 
 if __name__ == '__main__':
