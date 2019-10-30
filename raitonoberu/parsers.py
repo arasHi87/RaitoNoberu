@@ -13,8 +13,8 @@ import urllib.request
 
 from logger import logger
 from opencc import OpenCC
+from utils import txt2epub
 from fuzzywuzzy import fuzz
-from epubmaker import txt2epub
 
 import multiprocessing as mp
 import http.cookiejar as cookielib
@@ -275,3 +275,13 @@ class EPUBSITEParser:
             for result in results:
                 logger.info('%13s : %s' % (result['href'].replace(
                     self.base_url, '').replace('.html', ''), result.text))
+
+    def downloader(self, _id):
+        # get main page
+        resp = requests.get(url=self.base_url+_id + '.html')
+        resp.encoding = 'utf-8'
+        soup = bs(resp.text, 'html.parser')
+        url = soup.find('a', text='google')['href']
+        if url:
+            _id = url.replace('https://drive.google.com/file/d/', '').replace('/view?usp=sharing', '')
+            print(_id)
