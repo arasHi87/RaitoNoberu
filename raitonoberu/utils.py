@@ -1,6 +1,8 @@
 from __future__ import unicode_literals, print_function
 import os
 import requests
+from mega import Mega
+from logger import logger
 from ebooklib import epub
 
 
@@ -60,3 +62,10 @@ def save_response_content(response, destination):
         for chunk in response.iter_content(CHUNK_SIZE):
             if chunk:  # filter out keep-alive new chunks
                 f.write(chunk)
+
+def download_file_from_mega_drive(url, path, name):
+    mega = Mega()
+    m = mega.login()
+    logger.info('Use anonymous login meag success')
+    logger.info('Starting download file')
+    m.download_url(url, path, name)
