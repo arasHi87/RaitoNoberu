@@ -12,9 +12,9 @@ import urllib.request
 
 from opencc import OpenCC
 from fuzzywuzzy import fuzz
-from lightdo.logger import logger
+from yagimaid.logger import logger
 from bs4 import BeautifulSoup as bs
-from lightdo.utils import txt2epub, download_file_from_google_drive, download_file_from_mega_drive
+from yagimaid.utils import txt2epub, download_file_from_google_drive, download_file_from_mega_drive
 
 import multiprocessing as mp
 import http.cookiejar as cookielib
