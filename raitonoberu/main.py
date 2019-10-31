@@ -8,8 +8,15 @@ arg_parser = ARGParser()
 
 def main():
     opt = arg_parser.parser()
-    if opt.search_key is not None:
-        wenku_parser.searcher(opt.search_key)
+    if opt.wenku_redata is not 0:
+        wenku_parser.re_get_data()
+    elif opt.wenku_renew:
+        wenku_parser.renew()
+    elif opt.search_key is not None:
+        if opt.wenku_seacher == 'online':
+            wenku_parser.online_searcher(opt.search_key)
+        else:
+            wenku_parser.local_seacher(opt.search_key)
         epubsite_parser.searcher(opt.search_key)
     elif opt.search_detail is not None:
         search_detail = opt.search_detail.split(':')

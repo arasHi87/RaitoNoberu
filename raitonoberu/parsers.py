@@ -41,7 +41,25 @@ class ARGParser:
                             default=4,
                             type=int,
                             help='set download process count')
+        parser.add_argument('--wenku',
+                            dest='wenku_seacher',
+                            default='online',
+                            help='set wenku searcher to online/local')
 
+        
+        # wenku local data parser
+        main_group.add_argument('--redata',
+                            dest='wenku_redata',
+                            type=int,
+                            default=0,
+                            help='reget all wenku local data, please enter the latest you want renew')
+        main_group.add_argument('--renew',
+                            dest='wenku_renew',
+                            action='store_true',
+                            default=False,
+                            help='renew wenku local data')
+
+        
         args = parser.parse_args()
 
         # check process count is illegal
@@ -55,6 +73,13 @@ class ARGParser:
             logger.warn(
                 'The process you set is too much, system has already change it to 8'
             )
+        
+
+        # check wenku renew data's end
+        # if args.wenku_redata < 2700:
+        #     args.wenku_redata = 2700
+        #     logger.warn('The end is to small, system has alreay change it to 2700')
+
 
         return args
 
@@ -67,6 +92,11 @@ class WENKUParser:
         self.search_url = 'https://www.wenku8.net/modules/article/search.php?searchtype=articlename&searchkey=$'
         self.download_url = 'http://dl.wenku8.com/packtxt.php?aid=$&vid=*&charset=big5'
         self.wenku_session = requests.Session()
+        self.data = {}
+
+        # lode data
+        with open('../data/wenku/data.json', 'r', encoding='utf8') as fp:
+            self.data = json.load(fp)
 
     def login(self):
         # login into wenku
@@ -119,7 +149,45 @@ class WENKUParser:
         except:
             logger.warn('Can\'t find novel {}'.format(str(aid)))
 
-    def searcher(self, key):
+    def re_get_data(self, end=2700):
+        for i in range(1, end):
+            result = self.get_main_page(i)
+            if result:
+                self.data.update(result)
+                with open('../data/wenku/data.json', 'w',
+                          encoding='utf8') as fp:
+                    json.dump(self.data, fp, ensure_ascii=False)
+
+    def renew(self):
+        # get lastes number from data
+        page = int(max(self.data, key=int)) + 1
+        while True:
+            result = self.get_main_page(page)
+            page += 1
+            if result:
+                self.data.update(result)
+                with open('../data/wenku/data.json', 'w',
+                          encoding='utf8') as fp:
+                    json.dump(self.data, fp, ensure_ascii=False)
+            else:
+                logger.info('It\'s already renewed wenku\'s data to lastest')
+                break
+
+    def local_searcher(self, key):
+        result = {}
+        rating = 0
+        key = OpenCC('tw2s').convert(key)
+        print(key)
+        for idx in self.data.keys():
+            result[idx] = fuzz.partial_token_set_ratio(self.data[idx], key)
+        result = collections.OrderedDict(
+            sorted(result.items(), key=operator.itemgetter(1), reverse=True))
+        for idx in result:
+            if result[idx] < 50:
+                break
+            logger.info("%4s : %s" % (idx, self.data[idx]['title']))
+
+    def online_searcher(self, key):
         try:
             logger.info('======= wenku =======')
             self.login()
@@ -282,25 +350,32 @@ class EPUBSITEParser:
         soup = bs(resp.text, 'html.parser')
         title = soup.find('a', rel='bookmark').text
         google_url = soup.find('a', text='google')
-        mega_url   = soup.find('a', text='mega')
+        mega_url = soup.find('a', text='mega')
         if google_url:
             google_url = google_url['href']
             try:
                 logger.info('Strating download use google drive')
-                _id = google_url.replace('https://drive.google.com/file/d/',
-                                '').replace('/view?usp=sharing', '').replace(
-                                    'https://drive.google.com/open?id=', '')
-                download_file_from_google_drive(_id, '../data/novels/{}.epub'.format(title))
+                _id = google_url.replace(
+                    'https://drive.google.com/file/d/', '').replace(
+                        '/view?usp=sharing',
+                        '').replace('https://drive.google.com/open?id=', '')
+                download_file_from_google_drive(
+                    _id, '../data/novels/{}.epub'.format(title))
                 logger.info('Download successful')
             except Exception as e:
-                logger.warn('There are some error when download, please try later \n {}'.format(e))
+                logger.warn(
+                    'There are some error when download, please try later \n {}'
+                    .format(e))
         elif mega_url:
             mega_url = mega_url['href']
             try:
                 logger.info('Strating download use mega drive')
-                download_file_from_mega_drive(mega_url, '../data/novels/', title + '.epub')
+                download_file_from_mega_drive(mega_url, '../data/novels/',
+                                              title + '.epub')
                 logger.info('Download successful')
             except Exception as e:
-                logger.warn('There are some error when download, please try later \n {}'.format(e))
+                logger.warn(
+                    'There are some error when download, please try later \n {}'
+                    .format(e))
         else:
             logger.warn('There has no source can download')
