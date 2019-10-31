@@ -1,6 +1,6 @@
 from __future__ import unicode_literals, print_function
 import json
-from lightdo.parsers import *
+from yagimaid.parsers import *
 
 
 arg_parser = ARGParser()
