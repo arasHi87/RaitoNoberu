@@ -29,7 +29,7 @@ class ColoredFormatter(Formatter):
 
 
 # Create top level logger
-logger = logging.getLogger('RN-prject')
+logger = logging.getLogger('lightdo')
 
 # Add console handler using our custom ColoredFormatter
 ch = logging.StreamHandler()
