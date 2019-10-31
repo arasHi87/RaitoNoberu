@@ -9,14 +9,13 @@ import requests
 import argparse
 import collections
 import urllib.request
-import urllib.request
 
-from logger import logger
 from opencc import OpenCC
 from fuzzywuzzy import fuzz
+from lightdo.logger import logger
 from bs4 import BeautifulSoup as bs
-from config import WENKU_USERNAME, WENKU_PASSWORD
-from utils import txt2epub, download_file_from_google_drive, download_file_from_mega_drive
+from lightdo.config import WENKU_USERNAME, WENKU_PASSWORD
+from lightdo.utils import txt2epub, download_file_from_google_drive, download_file_from_mega_drive
 
 import multiprocessing as mp
 import http.cookiejar as cookielib
@@ -95,7 +94,7 @@ class WENKUParser:
         self.data = {}
 
         # lode data
-        with open('../data/wenku/data.json', 'r', encoding='utf8') as fp:
+        with open('lightdo/data/wenku/data.json', 'r', encoding='utf8') as fp:
             self.data = json.load(fp)
 
     def login(self):
@@ -107,7 +106,7 @@ class WENKUParser:
             'action': 'login'
         }
         self.wenku_session.cookies = cookielib.LWPCookieJar(
-            filename='../data/wenku/cookie.txt')
+            filename='lightdo/data/wenku/cookie.txt')
         try:
             # use cookie login
             self.wenku_session.cookies.load()
@@ -154,7 +153,7 @@ class WENKUParser:
             result = self.get_main_page(i)
             if result:
                 self.data.update(result)
-                with open('../data/wenku/data.json', 'w',
+                with open('lightdo/data/wenku/data.json', 'w',
                           encoding='utf8') as fp:
                     json.dump(self.data, fp, ensure_ascii=False)
 
@@ -166,7 +165,7 @@ class WENKUParser:
             page += 1
             if result:
                 self.data.update(result)
-                with open('../data/wenku/data.json', 'w',
+                with open('lightdo/data/wenku/data.json', 'w',
                           encoding='utf8') as fp:
                     json.dump(self.data, fp, ensure_ascii=False)
             else:
@@ -279,7 +278,7 @@ class WENKUParser:
                 logger.info('    ' + dict_data['title'])
 
     def downloader(self, data, process_count):
-        path = '../data/novels/' + data['title']
+        path = 'lightdo/data/novels/' + data['title']
 
         # template download function
         def download():
@@ -359,7 +358,7 @@ class EPUBSITEParser:
                         '/view?usp=sharing',
                         '').replace('https://drive.google.com/open?id=', '')
                 download_file_from_google_drive(
-                    _id, '../data/novels/{}.epub'.format(title))
+                    _id, 'lightdo/data/novels/{}.epub'.format(title))
                 logger.info('Download successful')
             except Exception as e:
                 logger.warn(
@@ -369,7 +368,7 @@ class EPUBSITEParser:
             mega_url = mega_url['href']
             try:
                 logger.info('Strating download use mega drive')
-                download_file_from_mega_drive(mega_url, '../data/novels/',
+                download_file_from_mega_drive(mega_url, 'lightdo/data/novels/',
                                               title + '.epub')
                 logger.info('Download successful')
             except Exception as e:

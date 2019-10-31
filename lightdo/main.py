@@ -1,5 +1,5 @@
-from __future__ import unicode_literals, print_function
-from parsers import *
+from __future__ import unicode_literals, print_function, absolute_import
+from lightdo.parsers import *
 
 epubsite_parser = EPUBSITEParser()
 wenku_parser = WENKUParser()
