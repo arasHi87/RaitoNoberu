@@ -177,7 +177,6 @@ class WENKUParser:
         result = {}
         rating = 0
         key = OpenCC('tw2s').convert(key)
-        print(key)
         for idx in self.data.keys():
             result[idx] = fuzz.partial_token_set_ratio(self.data[idx], key)
         result = collections.OrderedDict(

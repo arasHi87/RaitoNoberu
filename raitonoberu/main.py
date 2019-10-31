@@ -16,7 +16,7 @@ def main():
         if opt.wenku_seacher == 'online':
             wenku_parser.online_searcher(opt.search_key)
         else:
-            wenku_parser.local_seacher(opt.search_key)
+            wenku_parser.local_searcher(opt.search_key)
         epubsite_parser.searcher(opt.search_key)
     elif opt.search_detail is not None:
         search_detail = opt.search_detail.split(':')
