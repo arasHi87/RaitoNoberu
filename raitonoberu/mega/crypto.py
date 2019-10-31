@@ -65,15 +65,13 @@ def prepare_key(arr):
 
 
 def encrypt_key(a, key):
-    return sum(
-        (aes_cbc_encrypt_a32(a[i:i + 4], key) for i in range(0, len(a), 4)), ()
-    )
+    return sum((aes_cbc_encrypt_a32(a[i:i + 4], key)
+                for i in range(0, len(a), 4)), ())
 
 
 def decrypt_key(a, key):
-    return sum(
-        (aes_cbc_decrypt_a32(a[i:i + 4], key) for i in range(0, len(a), 4)), ()
-    )
+    return sum((aes_cbc_decrypt_a32(a[i:i + 4], key)
+                for i in range(0, len(a), 4)), ())
 
 
 def encrypt_attr(attr, key):
