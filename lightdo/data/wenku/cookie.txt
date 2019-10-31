@@ -1,4 +1,0 @@
-#LWP-Cookies-2.0
-Set-Cookie3: PHPSESSID=oggpq1sq452e8t1rlteqt0v0kat77lph; path="/"; domain="www.wenku8.net"; path_spec; expires="2019-10-31 11:50:03Z"; HttpOnly=None; version=0
-Set-Cookie3: jieqiUserInfo="jieqiUserId%3D580639%2CjieqiUserName%3Darashi87%2CjieqiUserGroup%3D3%2CjieqiUserVip%3D0%2CjieqiUserPassword%3D9b5930967a3095a05997a226240b7dd6%2CjieqiUserName_un%3Darashi87%2CjieqiUserHonor_un%3D%26%23x65B0%3B%26%23x624B%3B%26%23x4E0A%3B%26%23x8DEF%3B%2CjieqiUserGroupName_un%3D%26%23x666E%3B%26%23x901A%3B%26%23x4F1A%3B%26%23x5458%3B%2CjieqiUserLogin%3D1572414603"; path="/"; domain="www.wenku8.net"; path_spec; expires="2029-10-27 05:50:03Z"; version=0
-Set-Cookie3: jieqiVisitInfo="jieqiUserLogin%3D1572414603%2CjieqiUserId%3D580639"; path="/"; domain="www.wenku8.net"; path_spec; expires="2022-12-30 15:36:42Z"; version=0
