@@ -8,13 +8,26 @@ RAITCO NOBERU可以幫你在各個小說網站尋找輕小說並下載成epub檔
 預計支援
 * xbook
 
+## Installation
+you can clone it and install by your self
+```
+git clone https://github.com/arasHi87/RaitoNoberu
+cd raitonoberu
+# if you only have python3 use this
+python setup.py install
+# if you have 2 and 3 use this
+python3 setup.py install
+```
+
 ## usage
 
 ### options
 ```
-usage: main.py [-h] [--search SEARCH_KEY] [--detail SEARCH_DETAIL]
+usage: lightdo [-h] [--search SEARCH_KEY] [--detail SEARCH_DETAIL]
                [--download DOWNLOAD_DATAIL] [--cpu PROCESS_COUNT]
                [--wenku WENKU_SEACHER] [--redata WENKU_REDATA] [--renew]
+               [--wenku_account WENKU_ACCOUNT]
+               [--wenku_password WENKU_PASSWORD] [--anonymous]
 
 optional arguments:
   -h, --help            show this help message and exit
@@ -30,12 +43,18 @@ optional arguments:
                         reget all wenku local data, please enter the latest
                         you want renew
   --renew               renew wenku local data
+  --wenku_account WENKU_ACCOUNT, -wa WENKU_ACCOUNT
+                        set your wenku account
+  --wenku_password WENKU_PASSWORD, -wp WENKU_PASSWORD
+                        set your wenku password
+  --anonymous, -am      this will not store your account
 ```
 
-### 搜尋小說
-可以在後面加上`--wenku=local`，使用本地資料庫搜索，預設為線上搜索，但在wenku8裡如果搜尋結果超過兩頁，獲得下一頁需要等待五秒。
+### 搜尋小說以及登入wenku8帳號
+可以在後面加上`--wenku=local`，使用本地資料庫搜索，預設為線上搜索，但在wenku8裡如果搜尋結果超過兩頁，獲得下一頁需要等待五秒，同時你需要先登入帳號才能進行線上搜索，你可以使用`--anonymous`，這將不會保存你的帳密，但每次都需要重新輸入，或是在第一次就輸入之後就可以不用再輸入。
 ```
-$ python main.py --search 無職轉生
+$ python main.py --search 無職轉生 -wa=account -wp=pasword # this will save your account
+$ python main.py --search 無職轉生 -wa=account -wp=pasword --anonymous # this won't save your account
 
 [RN-prject][INFO]  ======= wenku =======
 [RN-prject][INFO]  use cookie login wenku
