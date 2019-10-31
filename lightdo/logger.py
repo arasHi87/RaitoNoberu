@@ -39,7 +39,7 @@ ch.setFormatter(cf)
 logger.addHandler(ch)
 
 # Add file handler
-fh = logging.FileHandler('log.log', encoding='utf-8')
+fh = logging.FileHandler('lightdo/log.log', encoding='utf-8')
 fh.setLevel(logging.DEBUG)
 ff = logging.Formatter(
     '[%(asctime)s] - [%(name)s] - [%(levelname)s] - %(message)s (%(filename)s:%(lineno)d)'
