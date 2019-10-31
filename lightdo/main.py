@@ -1,13 +1,34 @@
-from __future__ import unicode_literals, print_function, absolute_import
+from __future__ import unicode_literals, print_function
+import json
 from lightdo.parsers import *
 
-epubsite_parser = EPUBSITEParser()
-wenku_parser = WENKUParser()
+
 arg_parser = ARGParser()
+opt = arg_parser.parser()
+
+
+if not opt.is_anonymous:
+    config = {}
+
+    # open and load config
+    with open('lightdo/data/config.json') as fp:
+        config = json.load(fp)
+    
+    # change config
+    if opt.wenku_account:
+        config['wenku']['account'] = opt.wenku_account
+    if opt.wenku_password:
+        config['wenku']['password'] = opt.wenku_password
+
+    # save config
+    with open('lightdo/data/config.json', 'w') as fp:
+        json.dump(config, fp)
+
+epubsite_parser = EPUBSITEParser()
+wenku_parser = WENKUParser(opt.wenku_account, opt.wenku_password)
 
 
 def main():
-    opt = arg_parser.parser()
     if opt.wenku_redata is not 0:
         wenku_parser.re_get_data()
     elif opt.wenku_renew:

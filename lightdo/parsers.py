@@ -14,7 +14,6 @@ from opencc import OpenCC
 from fuzzywuzzy import fuzz
 from lightdo.logger import logger
 from bs4 import BeautifulSoup as bs
-from lightdo.config import WENKU_USERNAME, WENKU_PASSWORD
 from lightdo.utils import txt2epub, download_file_from_google_drive, download_file_from_mega_drive
 
 import multiprocessing as mp
@@ -57,6 +56,22 @@ class ARGParser:
                             action='store_true',
                             default=False,
                             help='renew wenku local data')
+        
+        # wenku account、password set
+        parser.add_argument('--wenku_account',
+                            '-wa',
+                            dest='wenku_account',
+                            help='set your wenku account')
+        parser.add_argument('--wenku_password',
+                            '-wp',
+                            dest='wenku_password',
+                            help='set your wenku password')
+        parser.add_argument('--anonymous',
+                            '-am',
+                            dest='is_anonymous',
+                            action='store_true',
+                            default=False,
+                            help='this will not store your account')
 
         
         args = parser.parse_args()
@@ -84,7 +99,7 @@ class ARGParser:
 
 
 class WENKUParser:
-    def __init__(self):
+    def __init__(self, account, password):
         self.base_url = 'https://www.wenku8.net/index.php'
         self.login_url = 'https://www.wenku8.net/login.php'
         self.main_page = 'https://www.wenku8.net/book/$.htm'
@@ -92,16 +107,21 @@ class WENKUParser:
         self.download_url = 'http://dl.wenku8.com/packtxt.php?aid=$&vid=*&charset=big5'
         self.wenku_session = requests.Session()
         self.data = {}
+        self.config = {}
 
         # lode data
         with open('lightdo/data/wenku/data.json', 'r', encoding='utf8') as fp:
             self.data = json.load(fp)
+        
+        # load config
+        with open('lightdo/data/config.json', 'r') as fp:
+            self.config = json.load(fp)
 
     def login(self):
         # login into wenku
         postData = {
-            'username': WENKU_USERNAME,
-            'password': WENKU_PASSWORD,
+            'username': self.config['wenku']['account'],
+            'password': self.config['wenku']['password'],
             'usecookie': '315360000',
             'action': 'login'
         }
