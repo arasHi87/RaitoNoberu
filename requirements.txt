@@ -8,7 +8,6 @@ lxml==4.4.1
 opencc-python-reimplemented==0.1.5
 pycryptodome==3.9.0
 python-Levenshtein==0.12.0
-python-mega==0.1.0
 requests==2.22.0
 six==1.12.0
 soupsieve==1.9.4
