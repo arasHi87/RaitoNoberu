@@ -4,7 +4,7 @@ chardet==3.0.4
 EbookLib==0.17.1
 fuzzywuzzy==0.17.0
 idna==2.8
-lxml==4.4.1
+lxml
 opencc-python-reimplemented==0.1.5
 pycryptodome==3.9.0
 python-Levenshtein==0.12.0
