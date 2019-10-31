@@ -1,6 +1,6 @@
-lightdo/config.py
-lightdo/log.log
-lightdo/data/wenku/cookie.txt
-lightdo/data/novels/
-lightdo/data/wenku/config.json
-lightdo/__pycache__
+yagimaid/config.py
+yagimaid/log.log
+yagimaid/data/wenku/cookie.txt
+yagimaid/data/novels/
+yagimaid/data/wenku/config.json
+yagimaid/__pycache__
