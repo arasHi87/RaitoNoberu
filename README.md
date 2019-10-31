@@ -12,9 +12,9 @@ RAITCO NOBERU可以幫你在各個小說網站尋找輕小說並下載成epub檔
 
 ### options
 ```
-usage: main.py [-h]
-               (--search SEARCH_KEY | --detail SEARCH_DETAIL | --download DOWNLOAD_DATAIL)
-               [--cpu PROCESS_COUNT]
+usage: main.py [-h] [--search SEARCH_KEY] [--detail SEARCH_DETAIL]
+               [--download DOWNLOAD_DATAIL] [--cpu PROCESS_COUNT]
+               [--wenku WENKU_SEACHER] [--redata WENKU_REDATA] [--renew]
 
 optional arguments:
   -h, --help            show this help message and exit
@@ -24,9 +24,16 @@ optional arguments:
   --download DOWNLOAD_DATAIL
                         download book
   --cpu PROCESS_COUNT   set download process count
+  --wenku WENKU_SEACHER
+                        set wenku searcher to online/local
+  --redata WENKU_REDATA
+                        reget all wenku local data, please enter the latest
+                        you want renew
+  --renew               renew wenku local data
 ```
 
 ### 搜尋小說
+可以在後面加上`--wenku=local`，使用本地資料庫搜索，預設為線上搜索，但在wenku8裡如果搜尋結果超過兩頁，獲得下一頁需要等待五秒。
 ```
 $ python main.py --search 無職轉生
 
@@ -102,6 +109,18 @@ $ python main.py --detail=wenku:1587
 目前支援wenku8、epub輕小說站，wenku8的會把所有本都下載下來並自動轉檔成epub格式，目前並不提供插圖，epub輕小說站僅會下載指定的本，建議使用epub輕小說站，格式為`source : id`，source是來源，目前僅有wenku，id是編號，可以在查詢時候獲得，每個來源的id格式都不一樣。
 ```
 $ python main.py --download=wenku:2638
+```
+
+### 更新wenku8本地資料
+更新本地的wenku8資料，會從上次最新的下一本開始尋找直到找不到為止
+```
+python main.py --renew
+```
+
+### 重新獲得wenku8的資料
+可以設定一個範圍，建議從2700開始
+```
+python main.py --redata 2700
 ```
 
 ## License
