@@ -409,19 +409,48 @@ class EPUBSITEParser:
             logger.warn('There has no source can download')
 
 
-class XBOOKParser:
-    def __init__(self):
-        self.base_url = 'https://x.book100.com/'
-        self.search_url = 'https://x.book100.com/search/result/'
+# class XBOOKParser:
+#     def __init__(self):
+#         self.main_url = 'https://x.book100.com/book/book{}.html'
+#         self.base_url = 'https://x.book100.com/'
+#         self.search_url = 'https://x.book100.com/search/result/'
+#         self.tab_url = 'https://x.book100.com/episode/{}/{}/1.html'
 
-    def searcher(self, key):
-        logger.info('======= xbook =======')
-        resp = requests.get(url=self.search_url, params={'key': key})
-        resp.encoding = 'utf-8'
-        soup = bs(resp.text, 'html.parser')
-        books = soup.find('div', class_='items').find_all('li')
-        for book in books:
-            result = book.find('a')
-            logger.info('{} : {}'.format(
-                re.findall(r'[0-9]+', result['href'])[0],
-                result.text.replace('\n', '')))
+#     def searcher(self, key):
+#         logger.info('======= xbook =======')
+#         resp = requests.get(url=self.search_url, params={'key': key})
+#         resp.encoding = 'utf-8'
+#         soup = bs(resp.text, 'html.parser')
+#         books = soup.find('div', class_='items').find_all('li')
+#         for book in books:
+#             result = book.find('a')
+#             logger.info('{} : {}'.format(
+#                 re.findall(r'[0-9]+', result['href'])[0],
+#                 result.text.replace('\n', '')))
+    
+#     def detail(self, aid):
+#         url = self.main_url.format(aid)
+#         resp = requests.get(url=url)
+#         resp.encoding = 'utf-8'
+#         soup = bs(resp.text, 'html.parser')
+#         # data = {
+#         #         'content': {},
+#         #         'aid': aid,
+#         #         'title': soup.title.string,
+#         #         'author': soup.find('div', class_='item').find('li').text.replace('作者:', '').strip()
+#         # }
+#         # get fisrt url to verify have multi page or not
+#         url_list = soup.find_all('a')
+#         first_number = 0
+#         for url in url_list:
+#             if url.find('li'):
+#                 first_number = int(re.findall(r'[0-9]+.html', url['href'])[0].replace('.html', '')) - 1
+#                 print(first_number)
+#                 break
+#         # number = int()
+    
+#     def show_detail(self, data):
+#         for idx in data['content']:
+#             logger.info(idx)
+#         for dict_data in data['content'][idx]:
+#             logger.info('    ' + dict_data['title'])
