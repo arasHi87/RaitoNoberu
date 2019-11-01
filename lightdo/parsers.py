@@ -25,7 +25,7 @@ loc = os.path.dirname(__file__)
 class ARGParser:
     def parser(self):
         parser = argparse.ArgumentParser()
-        main_group = parser.add_mutually_exclusive_group(required=True)
+        main_group = parser.add_mutually_exclusive_group()
         # search parser
         main_group.add_argument('--search',
                                 dest='search_key',
@@ -58,7 +58,8 @@ class ARGParser:
                             action='store_true',
                             default=False,
                             help='renew wenku local data')
-        
+
+
         # wenku account、password set
         parser.add_argument('--wenku_account',
                             '-wa',
@@ -74,6 +75,7 @@ class ARGParser:
                             action='store_true',
                             default=False,
                             help='this will not store your account')
+
 
         # set download opintion
         parser.add_argument('--path',
