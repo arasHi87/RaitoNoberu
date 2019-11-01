@@ -156,6 +156,9 @@ class WENKUParser:
             not_login = soup.find('caption')
             if not_login:
                 # use account logging
+                if not self.config['wenku']['account'] or not self.config['wenku']['password']:
+                    logger.error('You need to login wenku then you can search')
+                    return -1
                 resp = self.wenku_session.post(self.login_url, data=postData)
                 resp.encoding = 'gbk'
                 self.wenku_session.cookies.save()
@@ -263,7 +266,6 @@ class WENKUParser:
                 title = self.get_main_page(aid)[str(aid)]['title']
                 logger.info('%4s : %s' % (aid, title))
         except Exception as e:
-            logger.debug(e)
             logger.error('Fail to search wenku')
 
     def detail(self, aid):
