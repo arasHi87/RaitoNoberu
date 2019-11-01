@@ -2,8 +2,8 @@ from __future__ import unicode_literals, print_function
 import os
 import requests
 from ebooklib import epub
-from yagimaid.mega import Mega
-from yagimaid.logger import logger
+from lightdo.mega import Mega
+from lightdo.logger import logger
 
 
 def txt2epub(data, path):

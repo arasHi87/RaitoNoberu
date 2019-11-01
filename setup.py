@@ -1,5 +1,5 @@
 from setuptools import setup, find_packages, Extension
-from yagimaid import __version__, __author__, __email__
+from lightdo import __version__, __author__, __email__
 
 
 with open('requirements.txt') as f:
@@ -9,9 +9,9 @@ with open("README.md", encoding='utf-8') as file:
     long_description = file.read()
 
 setup (
-    name = 'yagimaid',
+    name = 'lightdo',
     version = __version__,
-    keywords = ['yagimaid', 'raito', 'raitonoberu', 'light novel downloader', 'novel'],
+    keywords = ['lightdo', 'raito', 'raitonoberu', 'light novel downloader', 'novel'],
     description = 'light novel downloader',
     author = __author__,
     author_email = __email__,
@@ -24,7 +24,7 @@ setup (
     install_requires = requirements,
     entry_points={
         'console_scripts': [
-            'yagimaid = yagimaid.main:main',
+            'lightdo = lightdo.main:main',
         ]
     }
 )
