@@ -38,6 +38,7 @@ usage: lightdo [-h] [--search SEARCH_KEY] [--detail SEARCH_DETAIL]
                [--wenku WENKU_SEACHER] [--redata WENKU_REDATA] [--renew]
                [--wenku_account WENKU_ACCOUNT]
                [--wenku_password WENKU_PASSWORD] [--anonymous]
+               [--path SAVE_PATH]
 
 optional arguments:
   -h, --help            show this help message and exit
@@ -58,13 +59,18 @@ optional arguments:
   --wenku_password WENKU_PASSWORD, -wp WENKU_PASSWORD
                         set your wenku password
   --anonymous, -am      this will not store your account
+  --path SAVE_PATH      set download path
+```
+### 登入輕小說文庫
+你需要先登入帳號才能進行線上搜索，或是你可以在搜索同時使用`--anonymous`，這將不會保存你的帳密，但每次都需要重新輸入。
+```
+lightdo -wa your_account -wp your_password
 ```
 
 ### 搜尋小說以及登入wenku8帳號
-可以在後面加上`--wenku=local`，使用本地資料庫搜索，預設為線上搜索，但在wenku8裡如果搜尋結果超過兩頁，獲得下一頁需要等待五秒，同時你需要先登入帳號才能進行線上搜索，你可以使用`--anonymous`，這將不會保存你的帳密，但每次都需要重新輸入，或是在第一次就輸入之後就可以不用再輸入。
+可以在後面加上`--wenku=local`，使用本地資料庫搜索，預設為線上搜索，但在wenku8裡如果搜尋結果超過兩頁，獲得下一頁需要等待五秒。
 ```
-$ python main.py --search 無職轉生 -wa=account -wp=pasword # this will save your account
-$ python main.py --search 無職轉生 -wa=account -wp=pasword --anonymous # this won't save your account
+$ lightdo --search 無職轉生 -wa=account -wp=pasword # this will save your account
 
 [RN-prject][INFO]  ======= wenku =======
 [RN-prject][INFO]  use cookie login wenku
@@ -87,7 +93,7 @@ $ python main.py --search 無職轉生 -wa=account -wp=pasword --anonymous # thi
 ### 獲得小說詳細資料 (章節)
 目前僅支援輕小說文庫(wenku8)，格式為`source : id`，source是來源，目前僅有wenku，id是編號，可以在查詢時候獲得，每個來源的id格式都不一樣。
 ```
-$ python main.py --detail=wenku:1587
+$ lightdo --detail=wenku:1587
 [RN-prject][INFO]  第一卷 幼年期
 [RN-prject][INFO]      序章
 [RN-prject][INFO]      第一话「难道是：异世界」
@@ -137,19 +143,19 @@ $ python main.py --detail=wenku:1587
 ### 下載小說
 目前支援wenku8、epub輕小說站，wenku8的會把所有本都下載下來並自動轉檔成epub格式，目前並不提供插圖，epub輕小說站僅會下載指定的本，建議使用epub輕小說站，格式為`source : id`，source是來源，目前僅有wenku，id是編號，可以在查詢時候獲得，每個來源的id格式都不一樣。
 ```
-$ python main.py --download=wenku:2638
+$ lightdo --download=wenku:2638
 ```
 
 ### 更新wenku8本地資料
 更新本地的wenku8資料，會從上次最新的下一本開始尋找直到找不到為止
 ```
-python main.py --renew
+lightdo --renew
 ```
 
 ### 重新獲得wenku8的資料
 可以設定一個範圍，建議從2700開始
 ```
-python main.py --redata 2700
+lightdo --redata 2700
 ```
 
 ## License
