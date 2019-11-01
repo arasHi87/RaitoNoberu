@@ -407,3 +407,21 @@ class EPUBSITEParser:
                     .format(e))
         else:
             logger.warn('There has no source can download')
+
+
+class XBOOKParser:
+    def __init__(self):
+        self.base_url = 'https://x.book100.com/'
+        self.search_url = 'https://x.book100.com/search/result/'
+
+    def searcher(self, key):
+        logger.info('======= xbook =======')
+        resp = requests.get(url=self.search_url, params={'key': key})
+        resp.encoding = 'utf-8'
+        soup = bs(resp.text, 'html.parser')
+        books = soup.find('div', class_='items').find_all('li')
+        for book in books:
+            result = book.find('a')
+            logger.info('{} : {}'.format(
+                re.findall(r'[0-9]+', result['href'])[0],
+                result.text.replace('\n', '')))

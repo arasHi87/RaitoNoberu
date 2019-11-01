@@ -27,6 +27,7 @@ if not opt.is_anonymous:
         json.dump(config, fp)
 
 epubsite_parser = EPUBSITEParser()
+xbook_parser = XBOOKParser()
 wenku_parser = WENKUParser(opt.wenku_account, opt.wenku_password)
 
 # clean wenku account
@@ -44,11 +45,12 @@ def main():
     elif opt.wenku_renew:
         wenku_parser.renew()
     elif opt.search_key is not None:
-        if opt.wenku_seacher == 'online':
-            wenku_parser.online_searcher(opt.search_key)
-        else:
-            wenku_parser.local_searcher(opt.search_key)
-        epubsite_parser.searcher(opt.search_key)
+        # if opt.wenku_seacher == 'online':
+        #     wenku_parser.online_searcher(opt.search_key)
+        # else:
+        #     wenku_parser.local_searcher(opt.search_key)
+        # epubsite_parser.searcher(opt.search_key)
+        xbook_parser.searcher(opt.search_key)
     elif opt.search_detail is not None:
         search_detail = opt.search_detail.split(':')
         source = search_detail[0]
