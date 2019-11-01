@@ -1,2 +1,5 @@
 include README.md
 include requirements.txt
+include lightdo/data/wenku/cookie.txt
+include lightdo/data/wenku/data.json
+include lightdo/data/config.json
