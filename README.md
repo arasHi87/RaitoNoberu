@@ -141,9 +141,10 @@ $ lightdo --detail=wenku:1587
 ```
 
 ### 下載小說
-目前支援wenku8、epub輕小說站，wenku8的會把所有本都下載下來並自動轉檔成epub格式，目前並不提供插圖，epub輕小說站僅會下載指定的本，建議使用epub輕小說站，格式為`source : id`，source是來源，目前僅有wenku，id是編號，可以在查詢時候獲得，每個來源的id格式都不一樣。
+目前支援wenku8、epub輕小說站，wenku8的會把所有本都下載下來並自動轉檔成epub格式，目前並不提供插圖，epub輕小說站僅會下載指定的本，建議使用epub輕小說站，格式為`source : id`，source是來源，目前僅有wenku，id是編號，可以在查詢時候獲得，每個來源的id格式都不一樣，也可以使用`--path`設定下載路徑，如果沒有的話預設下載在當前目錄。
 ```
 $ lightdo --download=wenku:2638
+$ lightdo --download=wenku:2638 --path=fuck/this/world
 ```
 
 ### 更新wenku8本地資料
