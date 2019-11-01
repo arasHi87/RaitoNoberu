@@ -1,6 +1,6 @@
 # RAITO NOBERU
 
-RAITCO NOBERU可以幫你在各個小說網站尋找輕小說並下載成epub檔案  
+RAITO NOBERU可以幫你在各個小說網站尋找輕小說並下載成epub檔案  
 目前支援
 * wenku8 
 * epub輕小說站  
@@ -13,10 +13,20 @@ you can clone it and install by your self
 ```
 git clone https://github.com/arasHi87/RaitoNoberu
 cd raitonoberu
+
 # if you only have python3 use this
 python setup.py install
+
 # if you have 2 and 3 use this
 python3 setup.py install
+```
+or you can install by use pip
+```
+# if you only have python3 use this
+pip install lightdo
+
+# if you have 2 and 3 use this
+pip3 install lightdo
 ```
 
 ## usage
