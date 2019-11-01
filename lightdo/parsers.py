@@ -19,8 +19,8 @@ from lightdo.utils import txt2epub, download_file_from_google_drive, download_fi
 import multiprocessing as mp
 import http.cookiejar as cookielib
 
-
 loc = os.path.dirname(__file__)
+
 
 class ARGParser:
     def parser(self):
@@ -46,19 +46,20 @@ class ARGParser:
                             default='online',
                             help='set wenku searcher to online/local')
 
-        
         # wenku local data parser
-        main_group.add_argument('--redata',
-                            dest='wenku_redata',
-                            type=int,
-                            default=0,
-                            help='reget all wenku local data, please enter the latest you want renew')
+        main_group.add_argument(
+            '--redata',
+            dest='wenku_redata',
+            type=int,
+            default=0,
+            help=
+            'reget all wenku local data, please enter the latest you want renew'
+        )
         main_group.add_argument('--renew',
-                            dest='wenku_renew',
-                            action='store_true',
-                            default=False,
-                            help='renew wenku local data')
-
+                                dest='wenku_renew',
+                                action='store_true',
+                                default=False,
+                                help='renew wenku local data')
 
         # wenku account、password set
         parser.add_argument('--clean',
@@ -81,14 +82,12 @@ class ARGParser:
                             default=False,
                             help='this will not store your account')
 
-
         # set download opintion
         parser.add_argument('--path',
                             dest='save_path',
                             default='.',
                             help='set download path')
 
-        
         args = parser.parse_args()
 
         # check process count is illegal
@@ -102,7 +101,6 @@ class ARGParser:
             logger.warn(
                 'The process you set is too much, system has already change it to 8'
             )
-        
 
         # check download path is true
         if not os.path.isdir(args.save_path):
@@ -113,7 +111,6 @@ class ARGParser:
         # if args.wenku_redata < 2700:
         #     args.wenku_redata = 2700
         #     logger.warn('The end is to small, system has alreay change it to 2700')
-
 
         return args
 
@@ -130,9 +127,11 @@ class WENKUParser:
         self.config = {}
 
         # lode data
-        with open(os.path.join(loc, 'data/wenku/data.json'), 'r', encoding='utf8') as fp:
+        with open(os.path.join(loc, 'data/wenku/data.json'),
+                  'r',
+                  encoding='utf8') as fp:
             self.data = json.load(fp)
-        
+
         # load config
         with open(os.path.join(loc, 'data/config.json'), 'r') as fp:
             self.config = json.load(fp)
@@ -156,7 +155,8 @@ class WENKUParser:
             not_login = soup.find('caption')
             if not_login:
                 # use account logging
-                if not self.config['wenku']['account'] or not self.config['wenku']['password']:
+                if not self.config['wenku']['account'] or not self.config[
+                        'wenku']['password']:
                     logger.error('You need to login wenku then you can search')
                     return -1
                 resp = self.wenku_session.post(self.login_url, data=postData)
@@ -196,7 +196,8 @@ class WENKUParser:
             result = self.get_main_page(i)
             if result:
                 self.data.update(result)
-                with open(os.path.join(loc, 'data/wenku/data.json'), 'w',
+                with open(os.path.join(loc, 'data/wenku/data.json'),
+                          'w',
                           encoding='utf8') as fp:
                     json.dump(self.data, fp, ensure_ascii=False)
 
@@ -208,7 +209,8 @@ class WENKUParser:
             page += 1
             if result:
                 self.data.update(result)
-                with open(os.path.join(loc, 'data/wenku/data.json'), 'w',
+                with open(os.path.join(loc, 'data/wenku/data.json'),
+                          'w',
                           encoding='utf8') as fp:
                     json.dump(self.data, fp, ensure_ascii=False)
             else:
@@ -396,7 +398,8 @@ class EPUBSITEParser:
             mega_url = mega_url['href']
             try:
                 logger.info('Strating download use mega drive')
-                download_file_from_mega_drive(mega_url, save_path + '/', title + '.epub')
+                download_file_from_mega_drive(mega_url, save_path + '/',
+                                              title + '.epub')
                 logger.info('Download successful')
             except Exception as e:
                 logger.warn(

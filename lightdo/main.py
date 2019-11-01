@@ -3,7 +3,6 @@ import json
 from lightdo.parsers import *
 from lightdo.logger import logger
 
-
 arg_parser = ARGParser()
 opt = arg_parser.parser()
 loc = os.path.dirname(__file__)
@@ -16,7 +15,7 @@ if not opt.is_anonymous:
     # open and load config
     with open(os.path.join(loc, 'data/config.json'), 'r') as fp:
         config = json.load(fp)
-    
+
     # change config
     if opt.wenku_account:
         config['wenku']['account'] = opt.wenku_account
@@ -35,6 +34,7 @@ if opt.clean_wenku_account:
     with open(os.path.join(loc, 'data/config.json'), 'w') as fp:
         json.dump({}, fp)
     logger.info('Already clean your login information')
+
 
 ############### main function ###############
 # main function
@@ -61,8 +61,7 @@ def main():
         _id = download_datail[1]
         if source == 'wenku':
             wenku_parser.downloader(wenku_parser.detail(_id),
-                                    opt.process_count,
-                                    opt.save_path)
+                                    opt.process_count, opt.save_path)
         elif source == 'epub':
             epubsite_parser.downloader(_id, opt.save_path)
 
