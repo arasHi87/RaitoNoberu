@@ -20,6 +20,8 @@ import multiprocessing as mp
 import http.cookiejar as cookielib
 
 
+loc = os.path.dirname(__file__)
+
 class ARGParser:
     def parser(self):
         parser = argparse.ArgumentParser()
@@ -121,11 +123,11 @@ class WENKUParser:
         self.config = {}
 
         # lode data
-        with open('lightdo/data/wenku/data.json', 'r', encoding='utf8') as fp:
+        with open(os.path.join(loc, 'data/wenku/data.json'), 'r', encoding='utf8') as fp:
             self.data = json.load(fp)
         
         # load config
-        with open('lightdo/data/config.json', 'r') as fp:
+        with open(os.path.join(loc, 'data/config.json'), 'r') as fp:
             self.config = json.load(fp)
 
     def login(self):
@@ -137,7 +139,7 @@ class WENKUParser:
             'action': 'login'
         }
         self.wenku_session.cookies = cookielib.LWPCookieJar(
-            filename='lightdo/data/wenku/cookie.txt')
+            filename=os.path.join(loc, 'data/wenku/cookie.txt'))
         try:
             # use cookie login
             self.wenku_session.cookies.load()
@@ -184,7 +186,7 @@ class WENKUParser:
             result = self.get_main_page(i)
             if result:
                 self.data.update(result)
-                with open('lightdo/data/wenku/data.json', 'w',
+                with open(os.path.join(loc, 'data/wenku/data.json'), 'w',
                           encoding='utf8') as fp:
                     json.dump(self.data, fp, ensure_ascii=False)
 
@@ -196,7 +198,7 @@ class WENKUParser:
             page += 1
             if result:
                 self.data.update(result)
-                with open('lightdo/data/wenku/data.json', 'w',
+                with open(os.path.join(loc, 'data/wenku/data.json'), 'w',
                           encoding='utf8') as fp:
                     json.dump(self.data, fp, ensure_ascii=False)
             else:
@@ -309,7 +311,7 @@ class WENKUParser:
                 logger.info('    ' + dict_data['title'])
 
     def downloader(self, data, process_count, save_path):
-        path = 'lightdo/data/novels/' + data['title']
+        # path = 'lightdo/data/novels/' + data['title']
 
         # template download function
         def download():

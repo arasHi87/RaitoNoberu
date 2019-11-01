@@ -5,13 +5,13 @@ from lightdo.parsers import *
 
 arg_parser = ARGParser()
 opt = arg_parser.parser()
-
+loc = os.path.dirname(__file__)
 
 if not opt.is_anonymous:
     config = {}
 
     # open and load config
-    with open('lightdo/data/config.json') as fp:
+    with open(os.path.join(loc, 'data/config.json'), 'r') as fp:
         config = json.load(fp)
     
     # change config
@@ -21,7 +21,7 @@ if not opt.is_anonymous:
         config['wenku']['password'] = opt.wenku_password
 
     # save config
-    with open('lightdo/data/config.json', 'w') as fp:
+    with open(os.path.join(loc, 'data/config.json'), 'w') as fp:
         json.dump(config, fp)
 
 epubsite_parser = EPUBSITEParser()
