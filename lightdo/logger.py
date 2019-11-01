@@ -1,5 +1,6 @@
-import logging
+import logging, os
 from copy import copy
+from pathlib import Path
 from logging import Formatter
 
 MAPPING = {
@@ -12,6 +13,7 @@ MAPPING = {
 
 PREFIX = '\033['
 SUFFIX = '\033[0m'
+loc = os.path.dirname(__file__)
 
 
 class ColoredFormatter(Formatter):
@@ -39,7 +41,7 @@ ch.setFormatter(cf)
 logger.addHandler(ch)
 
 # Add file handler
-fh = logging.FileHandler('log.log', encoding='utf-8')
+fh = logging.FileHandler(os.path.join(loc, '../log.log'), encoding='utf-8')
 fh.setLevel(logging.DEBUG)
 ff = logging.Formatter(
     '[%(asctime)s] - [%(name)s] - [%(levelname)s] - %(message)s (%(filename)s:%(lineno)d)'
