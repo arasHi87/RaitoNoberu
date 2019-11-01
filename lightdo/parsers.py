@@ -61,6 +61,11 @@ class ARGParser:
 
 
         # wenku account、password set
+        parser.add_argument('--clean',
+                            dest='clean_wenku_account',
+                            action='store_true',
+                            default=False,
+                            help='clean your wenku account')
         parser.add_argument('--wenku_account',
                             '-wa',
                             dest='wenku_account',

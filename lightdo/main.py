@@ -1,12 +1,15 @@
 from __future__ import unicode_literals, print_function
 import json
 from lightdo.parsers import *
+from lightdo.logger import logger
 
 
 arg_parser = ARGParser()
 opt = arg_parser.parser()
 loc = os.path.dirname(__file__)
 
+############## pre deal action ##############
+# wenku login option
 if not opt.is_anonymous:
     config = {}
 
@@ -27,7 +30,14 @@ if not opt.is_anonymous:
 epubsite_parser = EPUBSITEParser()
 wenku_parser = WENKUParser(opt.wenku_account, opt.wenku_password)
 
+# clean wenku account
+if opt.clean_wenku_account:
+    with open(os.path.join(loc, 'data/config.json'), 'w') as fp:
+        json.dump({}, fp)
+    logger.info('Already clean your login information')
 
+############### main function ###############
+# main function
 def main():
     if opt.wenku_redata is not 0:
         wenku_parser.re_get_data()
