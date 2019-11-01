@@ -73,6 +73,12 @@ class ARGParser:
                             default=False,
                             help='this will not store your account')
 
+        # set download opintion
+        parser.add_argument('--path',
+                            dest='save_path',
+                            default='.',
+                            help='set download path')
+
         
         args = parser.parse_args()
 
@@ -88,6 +94,11 @@ class ARGParser:
                 'The process you set is too much, system has already change it to 8'
             )
         
+
+        # check download path is true
+        if not os.path.isdir(args.save_path):
+            logger.error('Please enter a correct path')
+            exit(-1)
 
         # check wenku renew data's end
         # if args.wenku_redata < 2700:
@@ -297,30 +308,16 @@ class WENKUParser:
             for dict_data in data['content'][idx]:
                 logger.info('    ' + dict_data['title'])
 
-    def downloader(self, data, process_count):
+    def downloader(self, data, process_count, save_path):
         path = 'lightdo/data/novels/' + data['title']
 
         # template download function
         def download():
             resp = requests.get(url, allow_redirects=True)
-            with open(os.path.join(path, content['vid'][0] + '.txt'),
+            with open(os.path.join(save_path, content['vid'][0] + '.lightdo'),
                       'w',
                       encoding='utf-8') as fp:
                 fp.write(resp.text)
-
-        # deal data file
-        if not os.path.isdir(path):
-            os.mkdir(path)
-        else:
-            for file in os.listdir(path):
-                file_path = os.path.join(path, file)
-                try:
-                    if os.path.isfile(file_path):
-                        os.unlink(file_path)
-                except Exception as e:
-                    logger.warn(
-                        'There are some error when delete old novel data, please delete it by yourself'
-                    )
 
         # get content of every chapter
         logger.info('strating download')
@@ -334,12 +331,12 @@ class WENKUParser:
         p.join()
 
         # convert data to epub
-        txt2epub(data, path)
+        txt2epub(data, save_path)
 
         # delete other file unless
-        for file in os.listdir(path):
-            if file.endswith('txt'):
-                os.remove(os.path.join(path, file))
+        for file in os.listdir(save_path):
+            if file.endswith('lightdo'):
+                os.remove(os.path.join(save_path, file))
 
 
 class EPUBSITEParser:
@@ -361,7 +358,7 @@ class EPUBSITEParser:
                 logger.info('%13s : %s' % (result['href'].replace(
                     self.base_url, '').replace('.html', ''), result.text))
 
-    def downloader(self, _id):
+    def downloader(self, _id, save_path):
         # get main page
         resp = requests.get(url=self.base_url + _id + '.html')
         resp.encoding = 'utf-8'
@@ -369,6 +366,7 @@ class EPUBSITEParser:
         title = soup.find('a', rel='bookmark').text
         google_url = soup.find('a', text='google')
         mega_url = soup.find('a', text='mega')
+        google_url = None
         if google_url:
             google_url = google_url['href']
             try:
@@ -378,7 +376,7 @@ class EPUBSITEParser:
                         '/view?usp=sharing',
                         '').replace('https://drive.google.com/open?id=', '')
                 download_file_from_google_drive(
-                    _id, 'lightdo/data/novels/{}.epub'.format(title))
+                    _id, os.path.join(save_path, title + '.epub'))
                 logger.info('Download successful')
             except Exception as e:
                 logger.warn(
@@ -388,8 +386,7 @@ class EPUBSITEParser:
             mega_url = mega_url['href']
             try:
                 logger.info('Strating download use mega drive')
-                download_file_from_mega_drive(mega_url, 'lightdo/data/novels/',
-                                              title + '.epub')
+                download_file_from_mega_drive(mega_url, save_path + '/', title + '.epub')
                 logger.info('Download successful')
             except Exception as e:
                 logger.warn(

@@ -598,7 +598,7 @@ class Mega(object):
         if (file_mac[0] ^ file_mac[1], file_mac[2] ^ file_mac[3]) != meta_mac:
             raise ValueError('Mismatched mac')
 
-        shutil.move(temp_output_file.name, file_path + epub_name)
+        shutil.move(temp_output_file.name, os.path.join(file_path, epub_name))
 
     ##########################################################################
     # UPLOAD

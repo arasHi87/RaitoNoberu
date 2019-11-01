@@ -16,7 +16,7 @@ def txt2epub(data, path):
         for content in data['content'][name]:
             chapter = epub.EpubHtml(title=content['title'],
                                     file_name=content['vid'][0] + '.xhtml')
-            with open(path + '/' + content['vid'][0] + '.txt',
+            with open(os.path.join(path, content['vid'][0] + '.lightdo'),
                       'r',
                       encoding='utf-8') as fp:
                 chapter.content = fp.read()
@@ -29,7 +29,7 @@ def txt2epub(data, path):
         book.add_item(epub.EpubNcx())
         book.add_item(epub.EpubNav())
         book.spine = ['nav'] + chapter_list
-        epub.write_epub(path + '/' + name + '.epub', book, {})
+        epub.write_epub(os.path.join(path, name + '.epub'), book, {})
 
 
 def download_file_from_google_drive(id, destination):
