@@ -36,7 +36,7 @@ pip3 install lightdo
 usage: lightdo [-h] [--search SEARCH_KEY] [--detail SEARCH_DETAIL]
                [--download DOWNLOAD_DATAIL] [--cpu PROCESS_COUNT]
                [--wenku WENKU_SEACHER] [--redata WENKU_REDATA] [--renew]
-               [--wenku_account WENKU_ACCOUNT]
+               [--clean] [--wenku_account WENKU_ACCOUNT]
                [--wenku_password WENKU_PASSWORD] [--anonymous]
                [--path SAVE_PATH]
 
@@ -54,6 +54,7 @@ optional arguments:
                         reget all wenku local data, please enter the latest
                         you want renew
   --renew               renew wenku local data
+  --clean               clean your wenku account
   --wenku_account WENKU_ACCOUNT, -wa WENKU_ACCOUNT
                         set your wenku account
   --wenku_password WENKU_PASSWORD, -wp WENKU_PASSWORD
@@ -61,16 +62,16 @@ optional arguments:
   --anonymous, -am      this will not store your account
   --path SAVE_PATH      set download path
 ```
-### 登入輕小說文庫
+### 登入wenku8
 你需要先登入帳號才能進行線上搜索，或是你可以在搜索同時使用`--anonymous`，這將不會保存你的帳密，但每次都需要重新輸入。
 ```
 lightdo -wa your_account -wp your_password
 ```
 
-### 搜尋小說以及登入wenku8帳號
+### 搜尋小說
 可以在後面加上`--wenku=local`，使用本地資料庫搜索，預設為線上搜索，但在wenku8裡如果搜尋結果超過兩頁，獲得下一頁需要等待五秒。
 ```
-$ lightdo --search 無職轉生 -wa=account -wp=pasword # this will save your account
+$ lightdo --search 無職轉生 -wa=account -wp=pasword --anonymous # this will not save your account
 
 [RN-prject][INFO]  ======= wenku =======
 [RN-prject][INFO]  use cookie login wenku
@@ -157,6 +158,11 @@ lightdo --renew
 可以設定一個範圍，建議從2700開始
 ```
 lightdo --redata 2700
+```
+
+### 清除wenku8帳號
+```
+lightdo --clean
 ```
 
 ## License
