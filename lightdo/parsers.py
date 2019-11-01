@@ -366,7 +366,6 @@ class EPUBSITEParser:
         title = soup.find('a', rel='bookmark').text
         google_url = soup.find('a', text='google')
         mega_url = soup.find('a', text='mega')
-        google_url = None
         if google_url:
             google_url = google_url['href']
             try:
