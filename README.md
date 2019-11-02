@@ -6,7 +6,7 @@ RAITO NOBERU可以幫你在各個小說網站尋找輕小說並下載成epub檔�
 * epub輕小說站  
 
 預計支援
-* xbook
+* ~~xbook~~
 
 ## Installation
 you can clone it and install by your self
@@ -33,19 +33,18 @@ pip3 install lightdo
 
 ### options
 ```
-usage: lightdo [-h] [--search SEARCH_KEY] [--detail SEARCH_DETAIL]
-               [--download DOWNLOAD_DATAIL] [--cpu PROCESS_COUNT]
+usage: lightdo [-h] [--search SEARCH_KEY] [--detail SEARCH_ID]
+               [--download DOWNLOAD_ID] [--cpu PROCESS_COUNT]
                [--wenku WENKU_SEACHER] [--redata WENKU_REDATA] [--renew]
                [--clean] [--wenku_account WENKU_ACCOUNT]
                [--wenku_password WENKU_PASSWORD] [--anonymous]
-               [--path SAVE_PATH]
+               [--path SAVE_PATH] [-w] [-e]
 
 optional arguments:
   -h, --help            show this help message and exit
   --search SEARCH_KEY   Search keyword
-  --detail SEARCH_DETAIL
-                        get the book's detail
-  --download DOWNLOAD_DATAIL
+  --detail SEARCH_ID    get the book's detail
+  --download DOWNLOAD_ID
                         download book
   --cpu PROCESS_COUNT   set download process count
   --wenku WENKU_SEACHER
@@ -61,6 +60,8 @@ optional arguments:
                         set your wenku password
   --anonymous, -am      this will not store your account
   --path SAVE_PATH      set download path
+  -w                    set type to wenku
+  -e                    set type to epubsite
 ```
 ### 登入wenku8
 你需要先登入帳號才能進行線上搜索，或是你可以在搜索同時使用`--anonymous`，這將不會保存你的帳密，但每次都需要重新輸入。
@@ -92,9 +93,9 @@ $ lightdo --search 無職轉生 -wa=account -wp=pasword --anonymous # this will 
 ```
 
 ### 獲得小說詳細資料 (章節)
-目前僅支援輕小說文庫(wenku8)，格式為`source : id`，source是來源，目前僅有wenku，id是編號，可以在查詢時候獲得，每個來源的id格式都不一樣。
+目前僅支援輕小說文庫(wenku8)，`--detail`後面接你要的id，然後在後面接你要的選擇器，目前提供`-w`、`-e`，`-w`是指`wenku`，`-e`是`epub site`。
 ```
-$ lightdo --detail=wenku:1587
+$ lightdo --detail 1587 -w
 [RN-prject][INFO]  第一卷 幼年期
 [RN-prject][INFO]      序章
 [RN-prject][INFO]      第一话「难道是：异世界」
@@ -142,10 +143,10 @@ $ lightdo --detail=wenku:1587
 ```
 
 ### 下載小說
-目前支援wenku8、epub輕小說站，wenku8的會把所有本都下載下來並自動轉檔成epub格式，目前並不提供插圖，epub輕小說站僅會下載指定的本，建議使用epub輕小說站，格式為`source : id`，source是來源，目前僅有wenku，id是編號，可以在查詢時候獲得，每個來源的id格式都不一樣，也可以使用`--path`設定下載路徑，如果沒有的話預設下載在當前目錄。
+目前支援wenku8、epub輕小說站，wenku8的會把所有本都下載下來並自動轉檔成epub格式，目前並不提供插圖，epub輕小說站僅會下載指定的本，建議使用epub輕小說站，`--detail`後面接你要的id，然後在後面接你要的選擇器，目前提供`-w`、`-e`，`-w`是指`wenku`，`-e`是`epub site`，目前僅有wenku，id是編號，可以在查詢時候獲得，每個來源的id格式都不一樣，也可以使用`--path`設定下載路徑，如果沒有的話預設下載在當前目錄。
 ```
-$ lightdo --download=wenku:2638
-$ lightdo --download=wenku:2638 --path=fuck/this/world
+$ lightdo --download 2638 -w
+$ lightdo --download 2638 -w --path=fuck/this/world
 ```
 
 ### 更新wenku8本地資料
