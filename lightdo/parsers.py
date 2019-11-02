@@ -31,10 +31,10 @@ class ARGParser:
                                 dest='search_key',
                                 help='Search keyword')
         main_group.add_argument('--detail',
-                                dest='search_detail',
+                                dest='search_id',
                                 help='get the book\'s detail')
         main_group.add_argument('--download',
-                                dest='download_datail',
+                                dest='download_id',
                                 help='download book')
         parser.add_argument('--cpu',
                             dest='process_count',
@@ -88,6 +88,19 @@ class ARGParser:
                             default='.',
                             help='set download path')
 
+
+        # add chooser operation
+        parser.add_argument('-w',
+                            dest='is_wenku',
+                            action='store_true',
+                            default=False,
+                            help='set type to wenku')
+        parser.add_argument('-e',
+                            action='store_true',
+                            default=False,
+                            dest='is_epubsite',
+                            help='set type to epubsite')
+
         args = parser.parse_args()
 
         # check process count is illegal
@@ -111,6 +124,11 @@ class ARGParser:
         # if args.wenku_redata < 2700:
         #     args.wenku_redata = 2700
         #     logger.warn('The end is to small, system has alreay change it to 2700')
+
+        # check choose operatior
+        if args.is_wenku and args.is_epubsite:
+            logger.error('You can\'t choose multi operator')
+            exit(-1)
 
         return args
 
@@ -427,7 +445,7 @@ class EPUBSITEParser:
 #             logger.info('{} : {}'.format(
 #                 re.findall(r'[0-9]+', result['href'])[0],
 #                 result.text.replace('\n', '')))
-    
+
 #     def detail(self, aid):
 #         url = self.main_url.format(aid)
 #         resp = requests.get(url=url)
@@ -448,7 +466,7 @@ class EPUBSITEParser:
 #                 print(first_number)
 #                 break
 #         # number = int()
-    
+
 #     def show_detail(self, data):
 #         for idx in data['content']:
 #             logger.info(idx)

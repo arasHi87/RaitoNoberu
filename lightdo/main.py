@@ -50,24 +50,15 @@ def main():
         else:
             wenku_parser.local_searcher(opt.search_key)
         epubsite_parser.searcher(opt.search_key)
-        # xbook_parser.searcher(opt.search_key)
-    elif opt.search_detail is not None:
-        search_detail = opt.search_detail.split(':')
-        source = search_detail[0]
-        _id = search_detail[1]
-        if source == 'wenku':
-            wenku_parser.show_detail(wenku_parser.detail(_id))
-        # elif source == 'xbook':
-        #     xbook_parser.detail(_id)
-    elif opt.download_datail is not None:
-        download_datail = opt.download_datail.split(':')
-        source = download_datail[0]
-        _id = download_datail[1]
-        if source == 'wenku':
-            wenku_parser.downloader(wenku_parser.detail(_id),
+    elif opt.search_id is not None:
+        if opt.is_wenku:
+            wenku_parser.show_detail(wenku_parser.detail(opt.search_id))
+    elif opt.download_id is not None:
+        if opt.is_wenku:
+            wenku_parser.downloader(wenku_parser.detail(opt.download_id),
                                     opt.process_count, opt.save_path)
-        elif source == 'epub':
-            epubsite_parser.downloader(_id, opt.save_path)
+        elif opt.is_epubsite:
+            epubsite_parser.downloader(opt.download_datail, opt.save_path)
 
 
 if __name__ == '__main__':
