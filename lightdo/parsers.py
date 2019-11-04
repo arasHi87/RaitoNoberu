@@ -14,7 +14,7 @@ from opencc import OpenCC
 from fuzzywuzzy import fuzz
 from lightdo.logger import logger
 from bs4 import BeautifulSoup as bs
-from lightdo.utils import txt2epub, download_file_from_google_drive, download_file_from_mega_drive
+from lightdo.utils import txt2epub, download_file_from_google_drive, download_file_from_mega_drive, nth_dict
 
 import multiprocessing as mp
 import http.cookiejar as cookielib
@@ -87,7 +87,12 @@ class ARGParser:
                             dest='save_path',
                             default='.',
                             help='set download path')
-
+        parser.add_argument(
+            '--number',
+            dest='download_number',
+            type=int,
+            default=0,
+            help='set number you want to download, default is download all')
 
         # add chooser operation
         parser.add_argument('-w',
@@ -334,12 +339,14 @@ class WENKUParser:
             logger.warn('Can\'t find detail of {}'.format(aid))
 
     def show_detail(self, data):
+        cnt = 1
         for idx in data['content']:
-            logger.info(idx)
+            logger.info('{} - {}'.format(cnt, idx))
+            cnt += 1
             for dict_data in data['content'][idx]:
                 logger.info('    ' + dict_data['title'])
 
-    def downloader(self, data, process_count, save_path):
+    def downloader(self, data, process_count, save_path, nth=0):
         # path = 'lightdo/data/novels/' + data['title']
 
         # template download function
@@ -352,15 +359,30 @@ class WENKUParser:
 
         # get content of every chapter
         logger.info('strating download')
+        tmp_data = dict(data)
+        tmp_data['content'] = {}
         p = mp.Pool(processes=process_count)
-        for name in data['content']:
-            for content in data['content'][name]:
+        if nth <= 0:
+            for name in data['content']:
+                for content in data['content'][name]:
+                    url = self.download_url.replace('$', data['aid']).replace(
+                        '*', content['vid'][0])
+                    p.apply_async(download())
+            p.close()
+            p.join()
+        else:
+            tmp_data['content'][nth_dict(
+                data['content'], nth - 1)] = list(data['content'][nth_dict(
+                    data['content'], nth - 1)])
+            for content in tmp_data['content'][nth_dict(
+                    data['content'], nth - 1)]:
                 url = self.download_url.replace('$', data['aid']).replace(
                     '*', content['vid'][0])
                 p.apply_async(download())
-        p.close()
-        p.join()
-
+            p.close()
+            p.join()
+            data=dict(tmp_data)
+                
         # convert data to epub
         txt2epub(data, save_path)
 

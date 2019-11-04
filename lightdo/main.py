@@ -56,7 +56,7 @@ def main():
     elif opt.download_id is not None:
         if opt.is_wenku:
             wenku_parser.downloader(wenku_parser.detail(opt.download_id),
-                                    opt.process_count, opt.save_path)
+                                    opt.process_count, opt.save_path, opt.download_number)
         elif opt.is_epubsite:
             epubsite_parser.downloader(opt.download_datail, opt.save_path)
 
