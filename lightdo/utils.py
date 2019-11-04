@@ -71,6 +71,7 @@ def download_file_from_mega_drive(url, path, name):
     logger.info('Starting download file')
     m.download_url(url, path, name)
 
+
 def nth_dict(data, n):
     try:
         return list(data)[n]
