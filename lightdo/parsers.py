@@ -142,9 +142,9 @@ class WENKUParser:
     def __init__(self, account, password):
         self.base_url = 'https://www.wenku8.net/index.php'
         self.login_url = 'https://www.wenku8.net/login.php'
-        self.main_page = 'https://www.wenku8.net/book/$.htm'
-        self.search_url = 'https://www.wenku8.net/modules/article/search.php?searchtype=articlename&searchkey=$'
-        self.download_url = 'http://dl.wenku8.com/packtxt.php?aid=$&vid=*&charset=big5'
+        self.main_page = 'https://www.wenku8.net/book/{}.htm'
+        self.search_url = 'https://www.wenku8.net/modules/article/search.php?searchtype=articlename&searchkey={}'
+        self.download_url = 'http://dl.wenku8.com/packtxt.php?aid={}&vid={}&charset=big5'
         self.wenku_session = requests.Session()
         self.data = {}
         self.config = {}
@@ -195,7 +195,7 @@ class WENKUParser:
 
     def get_main_page(self, aid):
         try:
-            url = self.main_page.replace('$', str(aid))
+            url = self.main_page.format(aid)
             resp = requests.get(url=url)
             resp.encoding = 'gbk'
             soup = bs(resp.text, 'html.parser')
@@ -258,8 +258,8 @@ class WENKUParser:
             logger.info('======= wenku =======')
             self.login()
             key = OpenCC('tw2s').convert(key)
-            resp = self.wenku_session.get(url=self.search_url.replace(
-                '$', requests.utils.quote(key, encoding='gbk')))
+            resp = self.wenku_session.get(url=self.search_url.format(
+                requests.utils.quote(key, encoding='gbk')))
             resp.encoding = 'gbk'
             soup = bs(resp.text, 'html.parser')
 
@@ -276,8 +276,8 @@ class WENKUParser:
                     if (i == max_page + 1):
                         break
                     time.sleep(5)
-                    url = self.search_url.replace(
-                        '$', requests.utils.quote(
+                    url = self.search_url.format(
+                        requests.utils.quote(
                             key, encoding='gbk')) + '&page=' + str(i)
                     resp = self.wenku_session.get(url=url)
                     resp.encoding = 'gbk'
@@ -295,7 +295,7 @@ class WENKUParser:
 
     def detail(self, aid):
         try:
-            url = self.main_page.replace('$', str(aid))
+            url = self.main_page.format(aid)
 
             # get the content table of book's link
             resp = requests.get(url=url)
@@ -365,24 +365,22 @@ class WENKUParser:
         if nth <= 0:
             for name in data['content']:
                 for content in data['content'][name]:
-                    url = self.download_url.replace('$', data['aid']).replace(
-                        '*', content['vid'][0])
+                    url = self.download_url.format(data['aid'],
+                                                   content['vid'][0])
                     p.apply_async(download())
             p.close()
             p.join()
         else:
-            tmp_data['content'][nth_dict(
-                data['content'], nth - 1)] = list(data['content'][nth_dict(
-                    data['content'], nth - 1)])
+            tmp_data['content'][nth_dict(data['content'], nth - 1)] = list(
+                data['content'][nth_dict(data['content'], nth - 1)])
             for content in tmp_data['content'][nth_dict(
                     data['content'], nth - 1)]:
-                url = self.download_url.replace('$', data['aid']).replace(
-                    '*', content['vid'][0])
+                url = self.download_url.format(data['aid'], content['vid'][0])
                 p.apply_async(download())
             p.close()
             p.join()
-            data=dict(tmp_data)
-                
+            data = dict(tmp_data)
+
         # convert data to epub
         txt2epub(data, save_path)
 
@@ -449,48 +447,31 @@ class EPUBSITEParser:
             logger.warn('There has no source can download')
 
 
-# class XBOOKParser:
-#     def __init__(self):
-#         self.main_url = 'https://x.book100.com/book/book{}.html'
-#         self.base_url = 'https://x.book100.com/'
-#         self.search_url = 'https://x.book100.com/search/result/'
-#         self.tab_url = 'https://x.book100.com/episode/{}/{}/1.html'
+class SHENCOUParser:
+    def __init__(self):
+        self.base_url = 'http://www.shencou.com/'
+        self.search_url = 'http://www.shencou.com/modules/article/search.php'
+        self.main_page = 'http://www.shencou.com/books/read_{}.html'
+        self.header = {
+            'User-Agent':
+            'Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:70.0) Gecko/20100101 Firefox/70.0'
+        }
 
-#     def searcher(self, key):
-#         logger.info('======= xbook =======')
-#         resp = requests.get(url=self.search_url, params={'key': key})
-#         resp.encoding = 'utf-8'
-#         soup = bs(resp.text, 'html.parser')
-#         books = soup.find('div', class_='items').find_all('li')
-#         for book in books:
-#             result = book.find('a')
-#             logger.info('{} : {}'.format(
-#                 re.findall(r'[0-9]+', result['href'])[0],
-#                 result.text.replace('\n', '')))
-
-#     def detail(self, aid):
-#         url = self.main_url.format(aid)
-#         resp = requests.get(url=url)
-#         resp.encoding = 'utf-8'
-#         soup = bs(resp.text, 'html.parser')
-#         # data = {
-#         #         'content': {},
-#         #         'aid': aid,
-#         #         'title': soup.title.string,
-#         #         'author': soup.find('div', class_='item').find('li').text.replace('作者:', '').strip()
-#         # }
-#         # get fisrt url to verify have multi page or not
-#         url_list = soup.find_all('a')
-#         first_number = 0
-#         for url in url_list:
-#             if url.find('li'):
-#                 first_number = int(re.findall(r'[0-9]+.html', url['href'])[0].replace('.html', '')) - 1
-#                 print(first_number)
-#                 break
-#         # number = int()
-
-#     def show_detail(self, data):
-#         for idx in data['content']:
-#             logger.info(idx)
-#         for dict_data in data['content'][idx]:
-#             logger.info('    ' + dict_data['title'])
+    def seacher(self, key):
+        logger.info('======== shencou ========')
+        key = OpenCC('tw2s').convert(key)
+        resp = requests.get(
+            url=self.search_url +
+            '?searchtype=articlename+selected&searchkey={}&t_btnsearch=%CB%D1%CB%F7'
+            .format(requests.utils.quote(key, encoding='gbk')),
+            headers=self.header)
+        resp.encoding = 'gbk'
+        soup = bs(resp.text, 'html.parser')
+        titles = soup.find_all('tr')
+        for title in titles:
+            result = title.find('td', class_='odd')
+            if result:
+                logger.info(
+                    '%4s : %s' %
+                    (re.findall(r'[0-9]+',
+                                result.find('a')['href'])[0], result.text))
