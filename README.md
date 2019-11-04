@@ -38,7 +38,7 @@ usage: lightdo [-h] [--search SEARCH_KEY] [--detail SEARCH_ID]
                [--wenku WENKU_SEACHER] [--redata WENKU_REDATA] [--renew]
                [--clean] [--wenku_account WENKU_ACCOUNT]
                [--wenku_password WENKU_PASSWORD] [--anonymous]
-               [--path SAVE_PATH] [-w] [-e]
+               [--path SAVE_PATH] [--number DOWNLOAD_NUMBER] [-w] [-e]
 
 optional arguments:
   -h, --help            show this help message and exit
@@ -60,6 +60,9 @@ optional arguments:
                         set your wenku password
   --anonymous, -am      this will not store your account
   --path SAVE_PATH      set download path
+  --number DOWNLOAD_NUMBER
+                        set number you want to download, default is download
+                        all
   -w                    set type to wenku
   -e                    set type to epubsite
 ```
@@ -96,7 +99,7 @@ $ lightdo --search 無職轉生 -wa=account -wp=pasword --anonymous # this will 
 目前僅支援輕小說文庫(wenku8)，`--detail`後面接你要的id，然後在後面接你要的選擇器，目前提供`-w`、`-e`，`-w`是指`wenku`，`-e`是`epub site`。
 ```
 $ lightdo --detail 1587 -w
-[RN-prject][INFO]  第一卷 幼年期
+[RN-prject][INFO]  1- 第一卷 幼年期
 [RN-prject][INFO]      序章
 [RN-prject][INFO]      第一话「难道是：异世界」
 [RN-prject][INFO]      第二话「心生反感的女仆」
@@ -112,7 +115,7 @@ $ lightdo --detail 1587 -w
 [RN-prject][INFO]      外传 格雷拉特家的母亲
 [RN-prject][INFO]      插图
 [RN-prject][INFO]      特典〈人生的绿洲〉
-[RN-prject][INFO]  第二卷 少年期 家庭教师篇
+[RN-prject][INFO]  2- 第二卷 少年期 家庭教师篇
 [RN-prject][INFO]      序章
 [RN-prject][INFO]      第一话「大小姐的暴力」
 [RN-prject][INFO]      第二话「自导自演」
@@ -133,7 +136,7 @@ $ lightdo --detail 1587 -w
                   .
                   .
                   .
-[RN-prject][INFO]  第二十四卷 完结编 web版
+[RN-prject][INFO]  24 - 第二十四卷 完结编 web版
 [RN-prject][INFO]      第二百六十话 “最后之梦”
 [RN-prject][INFO]      第二百六十一话 “３４岁”
 [RN-prject][INFO]      间话“阿苏拉王国人物录 ‘卢迪乌斯．格瑞拉特’”
@@ -143,10 +146,11 @@ $ lightdo --detail 1587 -w
 ```
 
 ### 下載小說
-目前支援wenku8、epub輕小說站，wenku8的會把所有本都下載下來並自動轉檔成epub格式，目前並不提供插圖，epub輕小說站僅會下載指定的本，建議使用epub輕小說站，`--detail`後面接你要的id，然後在後面接你要的選擇器，目前提供`-w`、`-e`，`-w`是指`wenku`，`-e`是`epub site`，目前僅有wenku，id是編號，可以在查詢時候獲得，每個來源的id格式都不一樣，也可以使用`--path`設定下載路徑，如果沒有的話預設下載在當前目錄。
+目前支援wenku8、epub輕小說站，wenku8的會把所有本都下載下來並自動轉檔成epub格式，目前並不提供插圖，epub輕小說站僅會下載指定的本，建議使用epub輕小說站，`--detail`後面接你要的id，然後在後面接你要的選擇器，目前提供`-w`、`-e`，`-w`是指`wenku`，`-e`是`epub site`，目前僅有wenku，id是編號，可以在查詢時候獲得，每個來源的id格式都不一樣，也可以使用`--path`設定下載路徑，如果沒有的話預設下載在當前目錄，也可以單獨下載一本，只需要在後面加上`--number nth`，`nth`是在查詢detail前面會輸出的編號。
 ```
 $ lightdo --download 2638 -w
 $ lightdo --download 2638 -w --path=fuck/this/world
+$ lightdo --download 1587 -w --number 87
 ```
 
 ### 更新wenku8本地資料
