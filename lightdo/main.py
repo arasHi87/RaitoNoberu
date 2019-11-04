@@ -59,6 +59,8 @@ def main():
                                     opt.process_count, opt.save_path)
         elif opt.is_epubsite:
             epubsite_parser.downloader(opt.download_datail, opt.save_path)
+    # elif opt.wenku_illst_renew:
+    #     wenku_parser.get_all_illustration()
 
 
 if __name__ == '__main__':

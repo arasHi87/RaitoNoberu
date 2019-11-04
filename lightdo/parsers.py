@@ -60,6 +60,12 @@ class ARGParser:
                                 action='store_true',
                                 default=False,
                                 help='renew wenku local data')
+        # main_group.add_argument('--renew_illustration',
+        #                         '-ri',
+        #                         dest='wenku_illst_renew',
+        #                         action='store_true',
+        #                         default=False,
+        #                         help='get all wenku novel\'s illustration')
 
         # wenku account、password set
         parser.add_argument('--clean',
@@ -87,7 +93,6 @@ class ARGParser:
                             dest='save_path',
                             default='.',
                             help='set download path')
-
 
         # add chooser operation
         parser.add_argument('-w',
@@ -143,6 +148,7 @@ class WENKUParser:
         self.wenku_session = requests.Session()
         self.data = {}
         self.config = {}
+        # self.illst = {}
 
         # lode data
         with open(os.path.join(loc, 'data/wenku/data.json'),
@@ -153,6 +159,13 @@ class WENKUParser:
         # load config
         with open(os.path.join(loc, 'data/config.json'), 'r') as fp:
             self.config = json.load(fp)
+
+        # load illustration
+        # with open(os.path.join(loc, 'data/wenku/illustration.json'),
+        #           'r',
+        #           encoding='utf8') as fp:
+        # with open('data/wenku/illustration.json', 'r', encoding='utf8') as fp:
+        #     self.illst = json.load(fp)
 
     def login(self):
         # login into wenku
@@ -208,6 +221,106 @@ class WENKUParser:
             }
         except:
             logger.warn('Can\'t find novel {}'.format(str(aid)))
+
+    # def get_illustration(self, aid):
+    #     if str(aid) not in self.illst['content']:
+    #         data = self.detail(aid)
+    #         self.illst['content'][str(aid)] = {}
+    #         # print(data)
+    #         # if can get data
+    #         if data:
+    #             for name in data['content']:
+    #                 # find '插圖'
+    #                 for part in data['content'][name]:
+    #                     if part['title'] == '插图':
+    #                         self.illst['content'][str(aid)][name] = {}
+    #                         self.illst['content'][str(
+    #                             aid)][name]['href'] = part['href']
+    #                         break
+    #             # print(self.illst['content'][str(aid)])
+    #             # parse illustration
+    #             if self.illst['content'][str(aid)]:
+    #                 self.illst['content'][str(aid)]['status'] = True
+    #                 for name in self.illst['content'][str(aid)]:
+    #                     if name == 'status':
+    #                         continue
+    #                     # print(self.illst['content'][str(aid)][name])
+    #                     idx = 1
+    #                     resp = requests.get(
+    #                         url=self.illst['content'][str(aid)][name]['href'])
+    #                     resp.encoding = 'gbk'
+    #                     soup = bs(resp.text, 'html.parser')
+    #                     # check if right
+    #                     if '因版权问题，文库不再提供该小说的阅读！' in soup.find(
+    #                             'div', id='content').text:
+    #                         continue
+    #                         # find from unsuccess tag
+    #                         logger.warn(
+    #                             'Starting try brute force, this may take hours'
+    #                         )
+    #                         for idx in self.illst['status']:
+    #                             if self.illst['status'][str(idx)] is False:
+    #                                 resp = requests.get(
+    #                                     url=self.illst['content'][str(
+    #                                         aid)][name]['href'].replace(
+    #                                             '.htm', '/' + idx + '.jpg'))
+    #                                 logger.warn('Not {}'.format(idx))
+    #                                 if resp.status_code != 404:
+    #                                     print(idx)
+    #                                     return -1
+    #                     else:
+    #                         contents = soup.find_all('img',
+    #                                                  class_='imagecontent')
+    #                         for content in contents:
+    #                             self.illst['content'][str(aid)][name][str(
+    #                                 idx)] = content['src']
+    #                             # print(content['src'])
+    #                             self.illst['status'][re.findall(
+    #                                 r'[0-9]+.jpg',
+    #                                 content['src'])[0].replace('.jpg',
+    #                                                            '')] = True
+    #                             idx += 1
+    #                         self.illst['content'][str(
+    #                             aid)][name]['total'] = idx
+    #             else:
+    #                 self.illst['content'][str(aid)]['status'] = False
+    #         else:
+    #             self.illst['content'][str(aid)]['status'] = False
+    #         # print(self.illst['content'][str(aid)])
+    #         # save data
+    #         with open('data/wenku/illustration.json',
+    #                   'w',
+    #                   encoding='utf8',
+    #                   ensure_ascii=False) as fp:
+    #             json.dump(self.illst, fp)
+
+    # def get_all_illustration(self, max_novel=2700, max_pic=125000):
+    #     # auto complement vacancy setting
+    #     # data : {
+    #     #    "title_1": "url_1",
+    #     #    "title_2": "url_2",
+    #     #    "status": true / false
+    #     # }
+
+    #     # complement illst status
+    #     logger.info('Start complet illustration')
+    #     for idx in range(1, max_pic + 1):
+    #         if str(idx) not in self.illst['status']:
+    #             self.illst['status'][str(idx)] = False
+    #     # with open(os.path.join(loc, 'data/wenku/illustration.json'),
+    #     #         'w',
+    #     #         encoding='utf8') as fp:
+    #     with open('data/wenku/illustration.json', 'w', encoding='utf8') as fp:
+    #         json.dump(self.illst, fp, ensure_ascii=False)
+
+    #     # complement content
+    #     logger.info('Start complet content')
+    #     for idx in range(4, 5):
+    #         try:
+    #             self.get_illustration(idx)
+    #             logger.info('Successful get {}'.format(idx))
+    #         except:
+    #             logger.warn('Failed to get {}'.format(idx))
 
     def re_get_data(self, end=2700):
         for i in range(1, end):
@@ -326,7 +439,11 @@ class WENKUParser:
                                     content.text,
                                     'vid':
                                     re.findall(r'[0-9]+',
-                                               content.find('a')['href'])
+                                               content.find('a')['href']),
+                                    'href':
+                                    content_table_url.replace(
+                                        'index.htm',
+                                        content.find('a')['href'])
                                 }))
                             # logger.info(content.text)
             return data
