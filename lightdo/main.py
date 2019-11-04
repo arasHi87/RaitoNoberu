@@ -54,6 +54,8 @@ def main():
     elif opt.search_id is not None:
         if opt.is_wenku:
             wenku_parser.show_detail(wenku_parser.detail(opt.search_id))
+        elif opt.is_shencou:
+            shencou_parser.show_detail(shencou_parser.detail(opt.search_id))
     elif opt.download_id is not None:
         if opt.is_wenku:
             wenku_parser.downloader(wenku_parser.detail(opt.download_id),

@@ -105,6 +105,11 @@ class ARGParser:
                             default=False,
                             dest='is_epubsite',
                             help='set type to epubsite')
+        parser.add_argument('-sc',
+                            action='store_true',
+                            default=False,
+                            dest='is_shencou',
+                            help='set type to shencou')
 
         args = parser.parse_args()
 
@@ -475,3 +480,63 @@ class SHENCOUParser:
                     '%4s : %s' %
                     (re.findall(r'[0-9]+',
                                 result.find('a')['href'])[0], result.text))
+
+    def detail(self, aid):
+        try:
+            url = self.main_page.format(aid)
+
+            # get the content table of book's link
+            logger.debug('Start get content table url')
+            resp = requests.get(url=url, headers=self.header)
+            resp.encoding = 'gbk'
+            soup = bs(resp.text, 'html.parser')
+            content_table_url = soup.find('a', text='开始阅读')['href']
+
+            # get main page
+            logger.debug('Start get main page')
+            resp = requests.get(url=content_table_url, headers=self.header)
+            resp.encoding = 'gbk'
+            soup = bs(resp.text, 'html.parser')
+            data = {
+                'content': {},
+                'aid':
+                aid,
+                'title':
+                OpenCC('s2tw').convert(
+                    soup.find('span',
+                              class_='bigname').text).replace('\n', ''),
+                'author':
+                soup.find('div', id='bookname').text.replace('作者：',
+                                                             '').split('\n')[0]
+            }
+            zjbox = soup.find('div', class_='zjbox')
+            while zjbox:
+                title = zjbox.find('h2').text
+                # logger.debug(title)
+                data['content'][title] = []
+                list_ = zjbox.find_all('div',
+                                       class_='zjlist4',
+                                       recursive=False)
+                for chapter_list in list_:
+                    names = chapter_list.find_all('a')
+                    for name in names:
+                        data['content'][title].append(
+                            dict({
+                                'title': name.text,
+                                'vid': re.findall(r'[0-9]+', name['href'])[0]
+                            }))
+                        # logger.debug('    %4s : %s' % (re.findall(
+                        #     r'[0-9]+', name['href'])[0], name.text))
+                zjbox = zjbox.find('div', class_='zjbox')
+            return data
+        except Exception as e:
+            logger.debug(e)
+            logger.warn('Can\'t find detail of {}'.format(aid))
+    
+    def show_detail(self, data):
+        cnt = 1
+        for idx in data['content']:
+            logger.info('{} - {}'.format(cnt, idx))
+            cnt += 1
+            for dict_data in data['content'][idx]:
+                logger.info('    ' + dict_data['title'])
