@@ -26,7 +26,6 @@ if not opt.is_anonymous:
     with open(os.path.join(loc, 'data/config.json'), 'w') as fp:
         json.dump(config, fp)
 
-shencou_parser = SHENCOUParser()
 epubsite_parser = EPUBSITEParser()
 wenku_parser = WENKUParser(opt.wenku_account, opt.wenku_password)
 
@@ -50,12 +49,9 @@ def main():
         else:
             wenku_parser.local_searcher(opt.search_key)
         epubsite_parser.searcher(opt.search_key)
-        shencou_parser.seacher(opt.search_key)
     elif opt.search_id is not None:
         if opt.is_wenku:
             wenku_parser.show_detail(wenku_parser.detail(opt.search_id))
-        elif opt.is_shencou:
-            shencou_parser.show_detail(shencou_parser.detail(opt.search_id))
     elif opt.download_id is not None:
         if opt.is_wenku:
             wenku_parser.downloader(wenku_parser.detail(opt.download_id),
@@ -63,10 +59,6 @@ def main():
                                     opt.download_number)
         elif opt.is_epubsite:
             epubsite_parser.downloader(opt.download_id, opt.save_path)
-        elif opt.is_shencou:
-            shencou_parser.downloader(shencou_parser.detail(opt.download_id),
-                                      opt.process_count, opt.save_path,
-                                      opt.download_number)
 
 
 if __name__ == '__main__':
