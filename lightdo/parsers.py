@@ -2,6 +2,7 @@ import os
 import re
 import time
 import json
+import pprint
 import codecs
 import shutil
 import operator
@@ -357,7 +358,7 @@ class WENKUParser:
         # template download function
         def download():
             resp = requests.get(url, allow_redirects=True)
-            with open(os.path.join(save_path, content['vid']+ '.lightdo'),
+            with open(os.path.join(save_path, content['vid'] + '.lightdo'),
                       'w',
                       encoding='utf-8') as fp:
                 fp.write(resp.text)
@@ -370,8 +371,7 @@ class WENKUParser:
         if nth <= 0:
             for name in data['content']:
                 for content in data['content'][name]:
-                    url = self.download_url.format(data['aid'],
-                                                   content['vid'])
+                    url = self.download_url.format(data['aid'], content['vid'])
                     p.apply_async(download())
             p.close()
             p.join()
@@ -549,15 +549,31 @@ class SHENCOUParser:
             resp = requests.get(url)
             resp.encoding = 'gbk'
             soup = bs(resp.text, 'html.parser')
-            text = soup.find('body').text.replace(
-                soup.find('div', id='breadCrumb').text,
-                '').replace(soup.find('div', id='guild').text,
-                            '').replace(soup.find('div', id='shop').text,
-                                        '').replace('GetFont();', '')
-            with open(os.path.join(save_path, content['vid'] + '.lightdo'),
-                      'w',
-                      encoding='utf-8') as fp:
-                fp.write(text)
+            text = soup.find('body')
+            for match in text.find_all('a'):  # remove link
+                match.decompose()
+            for match in text.find_all('div'):  # remove div
+                match.decompose()
+            for match in text.find_all('span'):  # remove span
+                match.decompose()
+            for match in text.find_all('script'):  # remove script
+                match.decompose()
+            for match in text.find_all(
+                    'img', class_="imagecontent"):  # renew image src
+                match.new_tag('img',
+                              attrs={
+                                  'border': '0',
+                                  'class': 'imagecontent',
+                                  'src': re.findall(r'[0-9]+.*', match['src'])[0]
+                              })
+                print(match)
+            # with open(os.path.join(save_path, content['vid'] + '.lightdo'),
+            #           'w',
+            #           encoding='utf-8') as fp:
+            #     fp.write(str(text))
+            # data['content'][name]['content'] = str(text)
+            content['text'] = str(text)
+            # print(str(text))
 
         # get content of every chapter
         logger.info('strating download')
@@ -573,8 +589,8 @@ class SHENCOUParser:
             p.close()
             p.join()
         else:
-            tmp_data['content'][nth_dict(data['content'], nth - 1)] = list(
-                data['content'][nth_dict(data['content'], nth - 1)])
+            nth_name = nth_dict(data['content'], nth - 1)
+            tmp_data['content'][nth_name] = list(data['content'][nth_name])
             for content in tmp_data['content'][nth_dict(
                     data['content'], nth - 1)]:
                 url = '{}{}.html'.format(data['content_table_url'],
@@ -583,6 +599,7 @@ class SHENCOUParser:
             p.close()
             p.join()
             data = dict(tmp_data)
+        pprint.pprint(data)
 
         # convert data to epub
         txt2epub(data, save_path)
