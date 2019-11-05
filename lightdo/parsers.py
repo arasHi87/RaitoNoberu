@@ -352,7 +352,7 @@ class WENKUParser:
         # template download function
         def download():
             resp = requests.get(url, allow_redirects=True)
-            with open(os.path.join(save_path, content['vid']+ '.lightdo'),
+            with open(os.path.join(save_path, content['vid'] + '.lightdo'),
                       'w',
                       encoding='utf-8') as fp:
                 fp.write(resp.text)
@@ -365,8 +365,7 @@ class WENKUParser:
         if nth <= 0:
             for name in data['content']:
                 for content in data['content'][name]:
-                    url = self.download_url.format(data['aid'],
-                                                   content['vid'])
+                    url = self.download_url.format(data['aid'], content['vid'])
                     p.apply_async(download())
             p.close()
             p.join()
