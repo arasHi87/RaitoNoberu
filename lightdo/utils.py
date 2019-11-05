@@ -15,16 +15,16 @@ def txt2epub(data, path):
         toc_list = []
         for content in data['content'][name]:
             chapter = epub.EpubHtml(title=content['title'],
-                                    file_name=content['vid'][0] + '.xhtml')
-            with open(os.path.join(path, content['vid'][0] + '.lightdo'),
+                                    file_name=content['vid'] + '.xhtml')
+            with open(os.path.join(path, content['vid'] + '.lightdo'),
                       'r',
                       encoding='utf-8') as fp:
                 chapter.content = fp.read()
             book.add_item(chapter)
             chapter_list.append(chapter)
             toc_list.append(
-                epub.Link(content['vid'][0] + '.xhtml', content['title'],
-                          content['vid'][0]))
+                epub.Link(content['vid'] + '.xhtml', content['title'],
+                          content['vid']))
         book.toc = tuple(toc_list)
         book.add_item(epub.EpubNcx())
         book.add_item(epub.EpubNav())
