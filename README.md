@@ -3,7 +3,8 @@
 RAITO NOBERU可以幫你在各個小說網站尋找輕小說並下載成epub檔案  
 目前支援
 * wenku8 
-* epub輕小說站  
+* epub輕小說站
+* 神湊 shencou  
 
 預計支援
 * ~~xbook~~
@@ -38,7 +39,7 @@ usage: lightdo [-h] [--search SEARCH_KEY] [--detail SEARCH_ID]
                [--wenku WENKU_SEACHER] [--redata WENKU_REDATA] [--renew]
                [--clean] [--wenku_account WENKU_ACCOUNT]
                [--wenku_password WENKU_PASSWORD] [--anonymous]
-               [--path SAVE_PATH] [--number DOWNLOAD_NUMBER] [-w] [-e]
+               [--path SAVE_PATH] [--number DOWNLOAD_NUMBER] [-w] [-e] [-sc]
 
 optional arguments:
   -h, --help            show this help message and exit
@@ -65,6 +66,7 @@ optional arguments:
                         all
   -w                    set type to wenku
   -e                    set type to epubsite
+  -sc                   set type to shencou
 ```
 ### 登入wenku8
 你需要先登入帳號才能進行線上搜索，或是你可以在搜索同時使用`--anonymous`，這將不會保存你的帳密，但每次都需要重新輸入。
