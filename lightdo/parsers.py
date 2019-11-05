@@ -352,10 +352,11 @@ class WENKUParser:
         # template download function
         def download():
             resp = requests.get(url, allow_redirects=True)
-            with open(os.path.join(save_path, content['vid'] + '.lightdo'),
-                      'w',
-                      encoding='utf-8') as fp:
-                fp.write(resp.text)
+            content['text'] = resp.text
+            # with open(os.path.join(save_path, content['vid'] + '.lightdo'),
+            #           'w',
+            #           encoding='utf-8') as fp:
+            #     fp.write(resp.text)
 
         # get content of every chapter
         logger.info('strating download')
@@ -384,9 +385,9 @@ class WENKUParser:
         txt2epub(data, save_path)
 
         # delete other file unless
-        for file in os.listdir(save_path):
-            if file.endswith('lightdo'):
-                os.remove(os.path.join(save_path, file))
+        # for file in os.listdir(save_path):
+        #     if file.endswith('lightdo'):
+        #         os.remove(os.path.join(save_path, file))
 
 
 class EPUBSITEParser:
