@@ -336,7 +336,7 @@ class WENKUParser:
                                     content.text,
                                     'vid':
                                     re.findall(r'[0-9]+',
-                                               content.find('a')['href'])
+                                               content.find('a')['href'])[0]
                                 }))
                             # logger.info(content.text)
             return data
@@ -357,7 +357,7 @@ class WENKUParser:
         # template download function
         def download():
             resp = requests.get(url, allow_redirects=True)
-            with open(os.path.join(save_path, content['vid'][0] + '.lightdo'),
+            with open(os.path.join(save_path, content['vid']+ '.lightdo'),
                       'w',
                       encoding='utf-8') as fp:
                 fp.write(resp.text)
@@ -371,7 +371,7 @@ class WENKUParser:
             for name in data['content']:
                 for content in data['content'][name]:
                     url = self.download_url.format(data['aid'],
-                                                   content['vid'][0])
+                                                   content['vid'])
                     p.apply_async(download())
             p.close()
             p.join()
@@ -380,7 +380,7 @@ class WENKUParser:
                 data['content'][nth_dict(data['content'], nth - 1)])
             for content in tmp_data['content'][nth_dict(
                     data['content'], nth - 1)]:
-                url = self.download_url.format(data['aid'], content['vid'][0])
+                url = self.download_url.format(data['aid'], content['vid'])
                 p.apply_async(download())
             p.close()
             p.join()
@@ -498,6 +498,8 @@ class SHENCOUParser:
             resp.encoding = 'gbk'
             soup = bs(resp.text, 'html.parser')
             data = {
+                'content_table_url':
+                content_table_url.replace('index.html', ''),
                 'content': {},
                 'aid':
                 aid,
@@ -532,7 +534,7 @@ class SHENCOUParser:
         except Exception as e:
             logger.debug(e)
             logger.warn('Can\'t find detail of {}'.format(aid))
-    
+
     def show_detail(self, data):
         cnt = 1
         for idx in data['content']:
@@ -540,3 +542,52 @@ class SHENCOUParser:
             cnt += 1
             for dict_data in data['content'][idx]:
                 logger.info('    ' + dict_data['title'])
+
+    def downloader(self, data, process_count, save_path, nth=0):
+        # template download function
+        def download():
+            resp = requests.get(url)
+            resp.encoding = 'gbk'
+            soup = bs(resp.text, 'html.parser')
+            text = soup.find('body').text.replace(
+                soup.find('div', id='breadCrumb').text,
+                '').replace(soup.find('div', id='guild').text,
+                            '').replace(soup.find('div', id='shop').text,
+                                        '').replace('GetFont();', '')
+            with open(os.path.join(save_path, content['vid'] + '.lightdo'),
+                      'w',
+                      encoding='utf-8') as fp:
+                fp.write(text)
+
+        # get content of every chapter
+        logger.info('strating download')
+        tmp_data = dict(data)
+        tmp_data['content'] = {}
+        p = mp.Pool(processes=process_count)
+        if nth <= 0:
+            for name in data['content']:
+                for content in data['content'][name]:
+                    url = '{}{}.html'.format(data['content_table_url'],
+                                             content['vid'])
+                    p.apply_async(download())
+            p.close()
+            p.join()
+        else:
+            tmp_data['content'][nth_dict(data['content'], nth - 1)] = list(
+                data['content'][nth_dict(data['content'], nth - 1)])
+            for content in tmp_data['content'][nth_dict(
+                    data['content'], nth - 1)]:
+                url = '{}{}.html'.format(data['content_table_url'],
+                                         content['vid'])
+                p.apply_async(download())
+            p.close()
+            p.join()
+            data = dict(tmp_data)
+
+        # convert data to epub
+        txt2epub(data, save_path)
+
+        # delete other file unless
+        for file in os.listdir(save_path):
+            if file.endswith('lightdo'):
+                os.remove(os.path.join(save_path, file))

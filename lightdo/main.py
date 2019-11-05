@@ -63,6 +63,10 @@ def main():
                                     opt.download_number)
         elif opt.is_epubsite:
             epubsite_parser.downloader(opt.download_id, opt.save_path)
+        elif opt.is_shencou:
+            shencou_parser.downloader(shencou_parser.detail(opt.download_id),
+                                      opt.process_count, opt.save_path,
+                                      opt.download_number)
 
 
 if __name__ == '__main__':
