@@ -125,11 +125,6 @@ class ARGParser:
             logger.error('Please enter a correct path')
             exit(-1)
 
-        # check wenku renew data's end
-        # if args.wenku_redata < 2700:
-        #     args.wenku_redata = 2700
-        #     logger.warn('The end is to small, system has alreay change it to 2700')
-
         # check choose operatior
         if args.is_wenku and args.is_epubsite:
             logger.error('You can\'t choose multi operator')
@@ -347,16 +342,10 @@ class WENKUParser:
                 logger.info('    ' + dict_data['title'])
 
     def downloader(self, data, process_count, save_path, nth=0):
-        # path = 'lightdo/data/novels/' + data['title']
-
         # template download function
         def download():
             resp = requests.get(url, allow_redirects=True)
             content['text'] = resp.text
-            # with open(os.path.join(save_path, content['vid'] + '.lightdo'),
-            #           'w',
-            #           encoding='utf-8') as fp:
-            #     fp.write(resp.text)
 
         # get content of every chapter
         logger.info('strating download')
@@ -383,11 +372,6 @@ class WENKUParser:
 
         # convert data to epub
         txt2epub(data, save_path)
-
-        # delete other file unless
-        # for file in os.listdir(save_path):
-        #     if file.endswith('lightdo'):
-        #         os.remove(os.path.join(save_path, file))
 
 
 class EPUBSITEParser:
