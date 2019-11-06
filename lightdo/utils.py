@@ -1,5 +1,7 @@
 from __future__ import unicode_literals, print_function
 import os
+import json
+import random
 import requests
 from ebooklib import epub
 from lightdo.mega import Mega
@@ -9,6 +11,8 @@ from lightdo.logger import logger
 def txt2epub(data, path):
     for name in data['content']:
         book = epub.EpubBook()
+        book.set_identifier('{}{}'.format(data['title'],
+                                          random.randint(0, 100000000)))
         book.set_title(data['title'])
         book.add_author(data['author'])
         chapter_list = []
