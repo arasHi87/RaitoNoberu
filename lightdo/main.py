@@ -21,6 +21,8 @@ if not opt.is_anonymous:
         config['wenku']['account'] = opt.wenku_account
     if opt.wenku_password:
         config['wenku']['password'] = opt.wenku_password
+    if opt.wenku_account or opt.wenku_password:
+        logger.info('Success save wenku login detail')
 
     # save config
     with open(os.path.join(loc, 'data/config.json'), 'w') as fp:
