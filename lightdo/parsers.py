@@ -346,6 +346,7 @@ class WENKUParser:
         def download():
             resp = requests.get(url, allow_redirects=True)
             content['text'] = resp.text
+            logger.info('Success get {}'.format(content['title']))
 
         # get content of every chapter
         logger.info('strating download')
@@ -372,6 +373,7 @@ class WENKUParser:
 
         # convert data to epub
         txt2epub(data, save_path)
+        logger.info('Success get all novels')
 
 
 class EPUBSITEParser:
