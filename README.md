@@ -1,38 +1,90 @@
 # RAITO NOBERU
 
-RAITO NOBERU可以幫你在各個小說網站尋找輕小說並下載成epub檔案，神湊目前已移除支援，因為其速度太慢  
-目前支援
-* wenku8 
-* epub輕小說站
-* ~~神湊 shencou~~  
+Raito Noberu can help you find light novel in every website already make parser, and also can help you convert those novels only have txt to epub.  
 
-預計支援
-* ~~xbook~~
+Now suppose the following website.  
+
+* [wenku8](https://www.wenku8.net/index.php)
+
+* [epubsite](http://epubln.blogspot.com/)
+
+And expected to suppose following website.  
+
+* [qb](https://www.x23qb.com/book/1230/)
+
+And following are stop suppose for some reason.
+
+* [shencou](http://www.shencou.com/)  
+This is cause it's response is too slow, if you want you can see shencou branch and add by yourself.
+* [xbook100](http://www.shencou.com/)  
+This is cause it's pagination mechanism is too strange, if you want you can help me too fix it.  
 
 ## Installation
-you can clone it and install by your self
-```
+
+clone and install by your self.
+
+```bash
 git clone https://github.com/arasHi87/RaitoNoberu
 cd raitonoberu
-
-# if you only have python3 use this
 python setup.py install
+```
 
-# if you have 2 and 3 use this
-python3 setup.py install
-```
-or you can install by use pip
-```
-# if you only have python3 use this
+Or you can just install by use pip.
+
+```bash
 pip install lightdo
-
-# if you have 2 and 3 use this
-pip3 install lightdo
 ```
 
-## usage
+## Usage
 
-### options
+***Important***  
+Before search you need to login wenku first, or wenku search will fail, or if you don't want to record you account/passeword then you can use anonymous option and login every time. And the default download folder will be the path where you run the command (CLI path).
+
+***login wenku***  
+login in first time, and you don't need to care about login problem after it, or you can add --anonymous to login without save data.
+
+```bash
+lightdo -wa your_account -wp your_password
+```
+
+***Search keyword***  
+The following login you don't need to do that if you have already login and didn't use anonymous option. And there are something special for wenku8 searcher. It has online mode and local mode, the different is that is online search result is over 1 page, every page have limit to wait 5 sec, so if you don't want to wait you can use `--wenku local` to set searcher to local.
+
+```bash
+lightdo --search mEOw -wa your_account -wp your_password --anonymous
+```
+
+***Get the Detail***  
+Now this option just suppose wenku8 (also just wenku8 need it), it will give you all chapter of all season of this book, you need to add `id` which will give you when you search, and in final you need to add `-w` option to choose wenku8 to get detail.
+
+```bash
+lightdo --detail 8787 -w
+```
+
+***Download novel***  
+This will help you download novel, if source is wneku8, it will download it by txt and convert it to epub automatically. If you doesn't set `--number id` to choose the season you want, it will help you download all season. In epubsite it will just download the novel you designation.Finally remember to designation the source where you want to download, we have `-w` to wenku8 and `-e` to epubsite, and there also have cpu option can set, the default is 4 process, if you think is too many or too less you can use `--cpu 87` to set.
+
+```bash
+lightdo --download 8787 -w --path novels --number 87
+```
+
+***Redata wenku8***  
+This option you maybe will never use it, it will try to reget all wenku8 data, so we suggest you don't use this option, if you really want to use it...... just do it!
+
+```bash
+# the number is the limit you want to get from wenku8, suggest is 3000
+lightdo --redata 3000
+```
+
+***Renew wenku8***  
+It will renew wenku data, and it will try to get from the lastest you got until it can't, if you just want to renew your local wenku8 data, just ue this, don't use redata.
+
+```bash
+lightdo --renew
+```
+
+***All options***
+
 ```
 usage: lightdo [-h] [--search SEARCH_KEY] [--detail SEARCH_ID]
                [--download DOWNLOAD_ID] [--cpu PROCESS_COUNT]
@@ -67,109 +119,7 @@ optional arguments:
   -w                    set type to wenku
   -e                    set type to epubsite
 ```
-### 登入wenku8
-你需要先登入帳號才能進行線上搜索，或是你可以在搜索同時使用`--anonymous`，這將不會保存你的帳密，但每次都需要重新輸入。
-```
-lightdo -wa your_account -wp your_password
-```
-
-### 搜尋小說
-可以在後面加上`--wenku=local`，使用本地資料庫搜索，預設為線上搜索，但在wenku8裡如果搜尋結果超過兩頁，獲得下一頁需要等待五秒。
-```
-$ lightdo --search 無職轉生 -wa=account -wp=pasword --anonymous # this will not save your account
-
-[RN-prject][INFO]  ======= wenku =======
-[RN-prject][INFO]  use cookie login wenku
-[RN-prject][INFO]  1587 : 无职转生～到了异世界就拿出真本事～(无职转生~在异世界认真地活下去~)
-[RN-prject][INFO]  ===== epub site =====
-[RN-prject][INFO]  2016/06/03_16 : 無職轉生 03 〜到了異世界就拿出真本事〜
-[RN-prject][INFO]  2015/12/02_16 : 無職轉生 02
-[RN-prject][INFO]  2014/08/01_82 : 無職轉生 01 ~在異世界認真地活下去~
-[RN-prject][INFO]  2018/07/12_21 : 無職轉生 ～到了異世界就拿出真本事～ 12
-[RN-prject][INFO]  2018/03/11_17 : 無職轉生 ～到了異世界就拿出真本事～ 11
-[RN-prject][INFO]     2018/01/10 : 無職轉生～到了異世界就拿出真本事～ 10
-[RN-prject][INFO]     2017/10/09 : 無職轉生～到了異世界就拿出真本事～ 09
-[RN-prject][INFO]     2017/10/08 : 無職轉生～到了異世界就拿出真本事～ 08
-[RN-prject][INFO]     2017/08/07 : 無職轉生～到了異世界就拿出真本事～ 07
-[RN-prject][INFO]  2017/03/06_28 : 無職轉生～到了異世界就拿出真本事～ 06
-[RN-prject][INFO]     2016/06/05 : 無職轉生 05 〜在異世界認真地活下去〜
-[RN-prject][INFO]  2016/06/04_16 : 無職轉生 04 〜到了異世界就拿出真本事〜
-```
-
-### 獲得小說詳細資料 (章節)
-目前僅支援輕小說文庫(wenku8)，`--detail`後面接你要的id，然後在後面接你要的選擇器，目前提供`-w`、`-e`，`-w`是指`wenku`，`-e`是`epub site`。
-```
-$ lightdo --detail 1587 -w
-[RN-prject][INFO]  1- 第一卷 幼年期
-[RN-prject][INFO]      序章
-[RN-prject][INFO]      第一话「难道是：异世界」
-[RN-prject][INFO]      第二话「心生反感的女仆」
-[RN-prject][INFO]      第三话「魔术教科书」
-[RN-prject][INFO]      第四话「师傅」
-[RN-prject][INFO]      第五话「剑术与魔术」
-[RN-prject][INFO]      第六话「尊敬的理由」
-[RN-prject][INFO]      第七话「朋友」
-[RN-prject][INFO]      第八话「迟钝」
-[RN-prject][INFO]      第九话「紧急家族会议」
-[RN-prject][INFO]      第十话「遭遇瓶颈」
-[RN-prject][INFO]      第十一话「离别」
-[RN-prject][INFO]      外传 格雷拉特家的母亲
-[RN-prject][INFO]      插图
-[RN-prject][INFO]      特典〈人生的绿洲〉
-[RN-prject][INFO]  2- 第二卷 少年期 家庭教师篇
-[RN-prject][INFO]      序章
-[RN-prject][INFO]      第一话「大小姐的暴力」
-[RN-prject][INFO]      第二话「自导自演」
-[RN-prject][INFO]      闲话「后日谈与伯雷亚斯式问候」
-[RN-prject][INFO]      第三话「凶暴性质尚未衰退」
-[RN-prject][INFO]      第四话「职员会议与星期日」
-[RN-prject][INFO]      第五话「大小姐十岁」
-[RN-prject][INFO]      第六话「学习语言」
-[RN-prject][INFO]      第七话「诺言」
-[RN-prject][INFO]      第八话「转折点」
-[RN-prject][INFO]      终章
-[RN-prject][INFO]      外传「森之女神」
-[RN-prject][INFO]      插图
-[RN-prject][INFO]      特典〈腹肌的力量〉
-                  .
-                  .
-                  .
-                  .
-                  .
-                  .
-[RN-prject][INFO]  24 - 第二十四卷 完结编 web版
-[RN-prject][INFO]      第二百六十话 “最后之梦”
-[RN-prject][INFO]      第二百六十一话 “３４岁”
-[RN-prject][INFO]      间话“阿苏拉王国人物录 ‘卢迪乌斯．格瑞拉特’”
-[RN-prject][INFO]      最终话 “死后的世界”
-[RN-prject][INFO]      终曲“Prologue Zero”
-[RN-prject][INFO]      后记
-```
-
-### 下載小說
-目前支援wenku8、epub輕小說站，wenku8的會把所有本都下載下來並自動轉檔成epub格式，目前並不提供插圖，epub輕小說站僅會下載指定的本，建議使用epub輕小說站，`--detail`後面接你要的id，然後在後面接你要的選擇器，目前提供`-w`、`-e`，`-w`是指`wenku`，`-e`是`epub site`，目前僅有wenku，id是編號，可以在查詢時候獲得，每個來源的id格式都不一樣，也可以使用`--path`設定下載路徑，如果沒有的話預設下載在當前目錄，也可以單獨下載一本，只需要在後面加上`--number nth`，`nth`是在查詢detail前面會輸出的編號。
-```
-$ lightdo --download 2638 -w
-$ lightdo --download 2638 -w --path=fuck/this/world
-$ lightdo --download 1587 -w --number 87
-```
-
-### 更新wenku8本地資料
-更新本地的wenku8資料，會從上次最新的下一本開始尋找直到找不到為止
-```
-lightdo --renew
-```
-
-### 重新獲得wenku8的資料
-可以設定一個範圍，建議從2700開始
-```
-lightdo --redata 2700
-```
-
-### 清除wenku8帳號
-```
-lightdo --clean
-```
 
 ## License
-[MIT](https://choosealicense.com/licenses/mit/)
+
+This project is licensed under the MIT License - see the [MIT](https://choosealicense.com/licenses/mit/) for details
