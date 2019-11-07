@@ -304,6 +304,7 @@ class WENKUParser:
             soup = bs(resp.text, 'html.parser')
             title = ''
             data = {
+                'content_table_url': content_table_url,
                 'content': {},
                 'aid': aid,
                 'title':
@@ -344,9 +345,32 @@ class WENKUParser:
     def downloader(self, data, process_count, save_path, nth=0):
         # template download function
         def download():
-            resp = requests.get(url, allow_redirects=True)
-            content['text'] = resp.text
-            logger.info('Success get {}'.format(content['title']))
+            try:
+                if can_normal_download:
+                    url = data['content_table_url'].replace(
+                        'index', content['vid'])
+                    resp = requests.get(url)
+                    resp.encoding = 'gbk'
+                    soup = bs(resp.text, 'html.parser')
+                    content['text'] = str(soup.find('div', id='content'))
+                else:
+                    url = self.download_url.format(data['aid'], content['vid'])
+                    resp = requests.get(url, allow_redirects=True)
+                    content['text'] = resp.text
+                logger.info('Success get {}'.format(content['title']))
+            except:
+                logger.error(
+                    'Can\'t get {}, there are some errors happend'.format(
+                        content['title']))
+
+        # test if can download from origin page
+        resp = requests.get(url=self.main_page.format(data['aid']))
+        resp.encoding = 'gbk'
+        soup = bs(resp.text, 'html.parser')
+        can_normal_download = True
+
+        if '因版权问题' in soup.find('span', class_='hottext').text:
+            can_normal_download = False
 
         # get content of every chapter
         logger.info('strating download')
@@ -356,7 +380,6 @@ class WENKUParser:
         if nth <= 0:
             for name in data['content']:
                 for content in data['content'][name]:
-                    url = self.download_url.format(data['aid'], content['vid'])
                     p.apply_async(download())
             p.close()
             p.join()
@@ -365,7 +388,6 @@ class WENKUParser:
                 data['content'][nth_dict(data['content'], nth - 1)])
             for content in tmp_data['content'][nth_dict(
                     data['content'], nth - 1)]:
-                url = self.download_url.format(data['aid'], content['vid'])
                 p.apply_async(download())
             p.close()
             p.join()
